@@ -446,9 +446,9 @@
       background: linear-gradient(145deg, #1c3012, #0f1a0a);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 20px;
-      max-width: 720px;
+      max-width: 860px;
       width: 100%;
-      max-height: 90vh;
+      max-height: 92vh;
       overflow-y: auto;
       position: relative;
       box-shadow: 0 32px 100px rgba(0,0,0,0.8);
@@ -470,21 +470,23 @@
       z-index: 10;
     }
     .pmodal-close:hover { background: var(--orange); color: #fff; }
+    /* Shopify-komponentti täyttää vasemman puolen */
     .pmodal-body {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.1fr 1fr;
       gap: 0;
       clear: both;
     }
-    @media (max-width: 560px) { .pmodal-body { grid-template-columns: 1fr; } }
-    .pmodal-img {
+    @media (max-width: 600px) { .pmodal-body { grid-template-columns: 1fr; } }
+    /* Shopify-komponentti vasemmalla */
+    .pmodal-shopify-main {
       background: #111d0a;
       border-radius: 0 0 0 20px;
-      display: flex; align-items: center; justify-content: center;
-      min-height: 260px;
-      font-size: 6rem;
+      padding: 1.2rem;
+      min-height: 340px;
+      display: flex; align-items: flex-start; justify-content: center;
     }
-    @media (max-width: 560px) { .pmodal-img { border-radius: 0; min-height: 200px; } }
+    @media (max-width: 600px) { .pmodal-shopify-main { border-radius: 0; min-height: 260px; } }
     .pmodal-info {
       padding: 2rem 1.8rem 2rem 1.6rem;
       display: flex; flex-direction: column; gap: 1rem;
@@ -503,19 +505,19 @@
     }
     .pmodal-info h2 {
       font-family: 'Oswald', sans-serif;
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       color: var(--white);
       letter-spacing: 1px;
       line-height: 1.2;
     }
     .pmodal-info .pmodal-desc {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--cream);
       line-height: 1.7;
     }
     .pmodal-section-title {
       font-family: 'Oswald', sans-serif;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--orange);
       letter-spacing: 2px;
       text-transform: uppercase;
@@ -524,26 +526,37 @@
     .size-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }
     .size-table th {
       background: rgba(212,98,26,0.15);
       color: var(--orange);
       font-family: 'Oswald', sans-serif;
       letter-spacing: 1px;
-      padding: 6px 10px;
+      padding: 5px 8px;
       text-align: left;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
     }
     .size-table td {
-      padding: 5px 10px;
+      padding: 4px 8px;
       color: var(--cream);
       border-bottom: 1px solid rgba(255,255,255,0.05);
     }
     .size-table tr:last-child td { border-bottom: none; }
-    .pmodal-shopify { margin-top: auto; padding-top: 0.5rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    #pmodal-product-img img { width:100%; height:100%; object-fit:cover; border-radius: 0 0 0 20px; }
+    /* Shopify Buy Button override — leveä kuva vasemmalla */
+    .pmodal-shopify-main .shopify-buy__product { max-width: 100% !important; }
+    .pmodal-shopify-main .shopify-buy__product-img-wrapper { width: 100% !important; }
+    /* Tuotekorttien placeholder ilman emojia */
+    .product-img-placeholder {
+      width: 100%; aspect-ratio: 1;
+      background: #111d0a;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .product-img-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+    .product-img-placeholder .ph-icon {
+      width: 48px; height: 48px; opacity: 0.12;
+    }
 
     .product-info {
       padding: 1rem 1.1rem;
@@ -1168,7 +1181,9 @@
         <div class="product-badge printful">Printful</div>
         <div class="product-img">
           <div class="product-img-inner">
-            <img src="logo.png" alt="WBH T-paita" style="width:60%;opacity:0.18;filter:invert(1);" />
+            <div id="card-tpaita-img" class="product-img-placeholder" style="aspect-ratio:1;">
+              <div style="width:36px;height:36px;border:3px solid rgba(212,98,26,0.4);border-top-color:var(--orange);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+            </div>
             <span class="product-view-hint">🔍 Katso lisätiedot</span>
           </div>
         </div>
@@ -1185,7 +1200,7 @@
       <div class="product-card">
         <div class="product-badge">Tulossa</div>
         <div class="product-badge printful">Printful</div>
-        <div class="product-img">🧢</div>
+        <div class="product-img-placeholder" style="aspect-ratio:1;"></div>
         <div class="product-info">
           <h3>WBH Lippalakki</h3>
           <p class="product-desc">Brodeerattu WBH-logo. Sopii metsälle ja kaupungille.</p>
@@ -1200,7 +1215,7 @@
       <div class="product-card">
         <div class="product-badge">Tulossa</div>
         <div class="product-badge printful">Printful</div>
-        <div class="product-img">🧥</div>
+        <div class="product-img-placeholder" style="aspect-ratio:1;"></div>
         <div class="product-info">
           <h3>WBH Huppari</h3>
           <p class="product-desc">Paksu fleece-huppari WBH-logolla. Lämmin metsäkäyttöön.</p>
@@ -1220,7 +1235,7 @@
 
       <div class="product-card">
         <div class="product-badge">Tulossa</div>
-        <div class="product-img">🔫</div>
+        <div class="product-img-placeholder" style="aspect-ratio:1;"></div>
         <div class="product-info">
           <h3>Aseen osat & pidikkeet</h3>
           <p class="product-desc">3D-tulostetut räätälöidyt osat. Tarkat mitat, kova laatu.</p>
@@ -1233,7 +1248,7 @@
 
       <div class="product-card">
         <div class="product-badge">Tulossa</div>
-        <div class="product-img">🎯</div>
+        <div class="product-img-placeholder" style="aspect-ratio:1;"></div>
         <div class="product-info">
           <h3>Metsästysvarusteet</h3>
           <p class="product-desc">Käytännölliset 3D-tulostetut tarvikkeet metsälle — suunniteltu metsästäjän tarpeisiin.</p>
@@ -1337,16 +1352,15 @@
     <div class="pmodal" role="dialog" aria-modal="true" aria-label="WBH T-paita">
       <button class="pmodal-close" onclick="closeProductModal()" aria-label="Sulje">✕</button>
       <div class="pmodal-body">
-        <div class="pmodal-img" id="pmodal-img-wrap">
-          <!-- Tuotekuva ladataan Shopifysta JS:llä -->
-          <div id="pmodal-product-img" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-            <div style="width:40px;height:40px;border:3px solid var(--orange);border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
-          </div>
+        <!-- Vasen: Shopify-komponentti kuvakarusellilla + värinvalinnalla -->
+        <div class="pmodal-shopify-main" onclick="event.stopPropagation()">
+          <div id='product-component-modal-tpaita' style="width:100%;"></div>
         </div>
+        <!-- Oikea: Suomenkieliset tiedot -->
         <div class="pmodal-info">
           <span class="pmodal-badge">Printful EU</span>
-          <h2 id="pmodal-title">WBH T-paita</h2>
-          <p class="pmodal-desc" id="pmodal-desc">Ladataan...</p>
+          <h2>WBH T-paita</h2>
+          <p class="pmodal-desc" id="pmodal-desc">Klassinen unisex-t-paita Wannabehunting-logolla. Laadukas DTG-painatus joka kestää pesua. Mukava istuvuus niin metsäretkellä kuin kaupungilla.</p>
 
           <div>
             <div class="pmodal-section-title">Kokotaulukko (cm)</div>
@@ -1371,11 +1385,6 @@
               Toimitus EU-varastolta 5–10 arkipäivää<br/>
               Ilmainen palautus 14 päivän sisällä
             </p>
-          </div>
-
-          <div class="pmodal-shopify" onclick="event.stopPropagation()">
-            <div class="pmodal-section-title">Tilaa</div>
-            <div id='product-component-modal-tpaita'></div>
           </div>
         </div>
       </div>
@@ -1464,7 +1473,7 @@
   <button class="cookie-settings-btn" id="cookie-settings-btn" onclick="showCookieBanner()" title="Evästeasetukset">🍪</button>
 
   <script>
-    // ── Hae tuotetiedot Shopifysta ──
+    // ── Hae tuotteen thumbnail korttia varten ──
     fetch('https://chs050-pp.myshopify.com/api/2024-01/graphql.json', {
       method: 'POST',
       headers: {
@@ -1473,30 +1482,23 @@
       },
       body: JSON.stringify({ query: `{
         product(id: "gid://shopify/Product/10696654258514") {
-          title
-          description
           images(first: 1) { edges { node { url altText } } }
         }
       }` })
     })
     .then(r => r.json())
     .then(data => {
-      const p = data.data.product;
-      // Kuva
-      const imgWrap = document.getElementById('pmodal-product-img');
-      if (p.images.edges.length > 0) {
-        const url = p.images.edges[0].node.url;
-        imgWrap.innerHTML = '<img src="' + url + '" alt="' + p.title + '" style="width:100%;height:100%;object-fit:cover;border-radius:0 0 0 20px;" />';
-      } else {
-        imgWrap.innerHTML = '<span style="font-size:5rem;opacity:0.15">👕</span>';
+      const imgs = data.data.product.images.edges;
+      const cardImg = document.getElementById('card-tpaita-img');
+      if (imgs.length > 0 && cardImg) {
+        cardImg.innerHTML = '<img src="' + imgs[0].node.url + '" alt="WBH T-paita" style="width:100%;height:100%;object-fit:cover;" />';
+      } else if (cardImg) {
+        cardImg.innerHTML = '';
       }
-      // Kuvaus (käännetty suomeksi alla)
-      const descEl = document.getElementById('pmodal-desc');
-      if (descEl && p.description) descEl.textContent = p.description;
     })
     .catch(() => {
-      document.getElementById('pmodal-product-img').innerHTML = '<span style="font-size:5rem;opacity:0.15">👕</span>';
-      document.getElementById('pmodal-desc').textContent = 'Klassinen unisex-t-paita Wannabehunting-logolla. Laadukas painatus, mukava istuvuus.';
+      const cardImg = document.getElementById('card-tpaita-img');
+      if (cardImg) cardImg.innerHTML = '';
     });
 
     // ── Product modal ──
@@ -1591,7 +1593,7 @@
         storefrontAccessToken: '59be8f704daac39846903bd32f7652ae',
       });
       ShopifyBuy.UI.onReady(client).then(function (ui) {
-        // Modaalin nappi
+        // Modaalin komponentti — kuva + värinvalinta + hinta + lisää koriin
         ui.createComponent('product', {
           id: '10696654258514',
           node: document.getElementById('product-component-modal-tpaita'),
@@ -1599,9 +1601,17 @@
           options: {
             "product": {
               "styles": {
-                "button": { ":hover": {"background-color":"#bf5817"}, "background-color":"#d4621a", ":focus":{"background-color":"#bf5817"}, "width":"100%" }
+                "product": { "max-width": "100%", "margin": "0" },
+                "button": { ":hover":{"background-color":"#bf5817"}, "background-color":"#d4621a", ":focus":{"background-color":"#bf5817"}, "width":"100%", "margin-top":"0.8rem" },
+                "price": { "color":"#f0e8d8" },
+                "compareAt": { "color":"#8fab7a" }
               },
-              "contents": { "img": false, "title": false, "price": true },
+              "contents": { "img": false, "imgWithCarousel": true, "title": true, "price": true, "options": true, "button": true, "buttonWithQuantity": false },
+              "text": { "button": "Lisää koriin" }
+            },
+            "modalProduct": {
+              "contents": { "img": false, "imgWithCarousel": true, "button": false, "buttonWithQuantity": true },
+              "styles": { "button": { "background-color":"#d4621a", ":hover":{"background-color":"#bf5817"} } },
               "text": { "button": "Lisää koriin" }
             },
             "cart": {
