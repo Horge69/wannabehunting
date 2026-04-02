@@ -508,6 +508,36 @@
     }
 
     /* ── TAPAHTUMAT ──────────────────────── */
+    .tapahtumat-outer {
+      position: relative;
+      background:
+        linear-gradient(rgba(10,20,6,0.82), rgba(10,20,6,0.82)),
+        url('images/tapahtumatkuva.JPG') center center / cover no-repeat;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .tapahtumat-outer .section-title { color: #fff; }
+
+    .tapahtumat-outer .event-card {
+      background: rgba(15, 30, 10, 0.65);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-color: rgba(255,255,255,0.12);
+    }
+
+    .tapahtumat-outer .event-card:hover {
+      background: rgba(20, 40, 14, 0.80);
+      border-color: var(--orange);
+    }
+
+    .tapahtumat-outer .contact-box {
+      background: rgba(15, 30, 10, 0.70);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-color: rgba(255,255,255,0.10);
+    }
+
     .events-intro {
       font-size: 0.97rem;
       line-height: 1.8;
@@ -936,9 +966,8 @@
 
   </section>
 
-  <div class="divider"></div>
-
   <!-- TAPAHTUMAT -->
+  <div class="tapahtumat-outer">
   <section class="section" id="tapahtumat">
     <div class="section-title">Tapahtumat & Esiintymiset</div>
     <div class="section-line"></div>
@@ -984,6 +1013,7 @@
     </div>
 
   </section>
+  </div><!-- /tapahtumat-outer -->
 
   <!-- NOTIFY -->
   <section class="section">
