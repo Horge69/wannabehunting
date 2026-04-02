@@ -455,20 +455,15 @@
       transition: background 0.15s;
     }
     .lightbox-close:hover { background: var(--orange); }
-    /* Suurennusnappula modaalin kuvalle */
-    .pmodal-zoom-btn {
-      position: absolute;
-      bottom: 10px; right: 10px;
-      background: rgba(0,0,0,0.55);
-      border: none; color: #fff;
-      width: 34px; height: 34px;
-      border-radius: 8px; font-size: 1rem;
-      cursor: zoom-in;
-      transition: background 0.15s;
-      z-index: 5;
-    }
-    .pmodal-zoom-btn:hover { background: var(--orange); }
     .pmodal-shopify-main { position: relative; }
+    .pmodal-zoom-hint {
+      text-align: center;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.3);
+      padding: 0.4rem 0 0.2rem;
+      letter-spacing: 0.5px;
+      pointer-events: none;
+    }
 
     /* PRODUCT MODAL */
     .pmodal-overlay {
@@ -1218,10 +1213,9 @@
     <div class="shop-category-title">👕 Merch — Printful</div>
     <div class="product-grid">
 
-      <div class="product-card has-modal">
+      <div class="product-card has-modal" id="tpaita-card">
         <div class="product-badge printful">Printful</div>
         <div class="product-info">
-          <button class="product-modal-trigger" onclick="openProductModal()">🔍 Katso lisätiedot &amp; koot</button>
           <h3>Make Hiace Great Again T-paita</h3>
           <p class="product-desc">Oversized unisex-paita logolla. Laadukas painatus, mukava istuvuus.</p>
           <!-- SHOPIFY BUY BUTTON -->
@@ -1391,7 +1385,7 @@
         <!-- Vasen: Shopify-komponentti kuvakarusellilla + värinvalinnalla -->
         <div class="pmodal-shopify-main" onclick="event.stopPropagation()">
           <div id='product-component-modal-tpaita' style="width:100%;"></div>
-          <button class="pmodal-zoom-btn" onclick="openLightbox()" title="Suurenna kuva">⛶</button>
+          <div class="pmodal-zoom-hint">🔍 Klikkaa kuvaa suurentaaksesi</div>
         </div>
         <!-- Oikea: Suomenkieliset tiedot -->
         <div class="pmodal-info">
@@ -1511,22 +1505,67 @@
 
   <script>
     // ── Lightbox ──
-    function openLightbox() {
-      // Hae Shopify-komponentin nykyinen tuotekuva
-      const modalEl = document.getElementById('product-component-modal-tpaita');
-      const img = modalEl && modalEl.querySelector('img[src*="cdn.shopify"]');
-      if (!img) return;
-      document.getElementById('lightbox-img').src = img.src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|1024x1024|2048x2048|master)\./, '_2048x2048.');
+    function openLightboxFromImg(img) {
+      const src = img.src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|1024x1024|2048x2048|master)(\.\w+)$/, '_2048x2048$2');
+      document.getElementById('lightbox-img').src = src;
       document.getElementById('lightbox').classList.add('open');
       document.body.style.overflow = 'hidden';
     }
     function closeLightbox() {
       document.getElementById('lightbox').classList.remove('open');
-      document.body.style.overflow = '';
+      if (!document.getElementById('productModal').classList.contains('open') &&
+          !document.getElementById('contactModal').classList.contains('open')) {
+        document.body.style.overflow = '';
+      }
     }
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') { closeProductModal(); closeContactModal(); closeLightbox(); }
     });
+
+    // ── Shopify-kuvien klikkaukset (MutationObserver) ──
+    function attachShopifyImageClicks() {
+      // Kortin kuva → avaa modaali
+      const cardComp = document.getElementById('product-component-1775163891947');
+      if (cardComp) {
+        const observer = new MutationObserver(() => {
+          const imgWrapper = cardComp.querySelector('.shopify-buy__product-img-wrapper, .shopify-buy__product__variant-img, img');
+          if (imgWrapper) {
+            imgWrapper.style.cursor = 'pointer';
+            imgWrapper.addEventListener('click', (e) => { e.stopPropagation(); openProductModal(); }, { once: false });
+            observer.disconnect();
+          }
+        });
+        observer.observe(cardComp, { childList: true, subtree: true });
+      }
+
+      // Modaalin kuva → avaa lightbox
+      const modalComp = document.getElementById('product-component-modal-tpaita');
+      if (modalComp) {
+        const mObserver = new MutationObserver(() => {
+          const imgs = modalComp.querySelectorAll('.shopify-buy__product-img-wrapper img, .shopify-buy__product__variant-img, .shopify-buy__carousel img');
+          if (imgs.length > 0) {
+            imgs.forEach(img => {
+              img.style.cursor = 'zoom-in';
+              img.addEventListener('click', (e) => { e.stopPropagation(); openLightboxFromImg(img); });
+            });
+            // Seuraa myös tulevia kuvia (värinvaihto)
+            const imgObserver = new MutationObserver(() => {
+              modalComp.querySelectorAll('img').forEach(img => {
+                if (!img.dataset.lightboxBound) {
+                  img.dataset.lightboxBound = '1';
+                  img.style.cursor = 'zoom-in';
+                  img.addEventListener('click', (e) => { e.stopPropagation(); openLightboxFromImg(img); });
+                }
+              });
+            });
+            imgObserver.observe(modalComp, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
+            mObserver.disconnect();
+          }
+        });
+        mObserver.observe(modalComp, { childList: true, subtree: true });
+      }
+    }
+    attachShopifyImageClicks();
 
     // ── Product modal ──
     function openProductModal() {
