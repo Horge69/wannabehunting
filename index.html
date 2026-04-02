@@ -1179,14 +1179,6 @@
 
       <div class="product-card has-modal" onclick="openProductModal()">
         <div class="product-badge printful">Printful</div>
-        <div class="product-img">
-          <div class="product-img-inner">
-            <div id="card-tpaita-img" class="product-img-placeholder" style="aspect-ratio:1;">
-              <div style="width:36px;height:36px;border:3px solid rgba(212,98,26,0.4);border-top-color:var(--orange);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
-            </div>
-            <span class="product-view-hint">🔍 Katso lisätiedot</span>
-          </div>
-        </div>
         <div class="product-info">
           <h3>WBH T-paita</h3>
           <p class="product-desc">Klassinen unisex-paita logolla. Laadukas painatus, mukava istuvuus.</p>
@@ -1200,7 +1192,6 @@
       <div class="product-card">
         <div class="product-badge">Tulossa</div>
         <div class="product-badge printful">Printful</div>
-        <div class="product-img-placeholder" style="aspect-ratio:1;"></div>
         <div class="product-info">
           <h3>WBH Lippalakki</h3>
           <p class="product-desc">Brodeerattu WBH-logo. Sopii metsälle ja kaupungille.</p>
@@ -1215,7 +1206,6 @@
       <div class="product-card">
         <div class="product-badge">Tulossa</div>
         <div class="product-badge printful">Printful</div>
-        <div class="product-img-placeholder" style="aspect-ratio:1;"></div>
         <div class="product-info">
           <h3>WBH Huppari</h3>
           <p class="product-desc">Paksu fleece-huppari WBH-logolla. Lämmin metsäkäyttöön.</p>
@@ -1235,7 +1225,6 @@
 
       <div class="product-card">
         <div class="product-badge">Tulossa</div>
-        <div class="product-img-placeholder" style="aspect-ratio:1;"></div>
         <div class="product-info">
           <h3>Aseen osat & pidikkeet</h3>
           <p class="product-desc">3D-tulostetut räätälöidyt osat. Tarkat mitat, kova laatu.</p>
@@ -1248,7 +1237,6 @@
 
       <div class="product-card">
         <div class="product-badge">Tulossa</div>
-        <div class="product-img-placeholder" style="aspect-ratio:1;"></div>
         <div class="product-info">
           <h3>Metsästysvarusteet</h3>
           <p class="product-desc">Käytännölliset 3D-tulostetut tarvikkeet metsälle — suunniteltu metsästäjän tarpeisiin.</p>
@@ -1473,34 +1461,6 @@
   <button class="cookie-settings-btn" id="cookie-settings-btn" onclick="showCookieBanner()" title="Evästeasetukset">🍪</button>
 
   <script>
-    // ── Hae tuotteen thumbnail korttia varten ──
-    fetch('https://chs050-pp.myshopify.com/api/2024-01/graphql.json', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': '59be8f704daac39846903bd32f7652ae'
-      },
-      body: JSON.stringify({ query: `{
-        product(id: "gid://shopify/Product/10696654258514") {
-          images(first: 1) { edges { node { url altText } } }
-        }
-      }` })
-    })
-    .then(r => r.json())
-    .then(data => {
-      const imgs = data.data.product.images.edges;
-      const cardImg = document.getElementById('card-tpaita-img');
-      if (imgs.length > 0 && cardImg) {
-        cardImg.innerHTML = '<img src="' + imgs[0].node.url + '" alt="WBH T-paita" style="width:100%;height:100%;object-fit:cover;" />';
-      } else if (cardImg) {
-        cardImg.innerHTML = '';
-      }
-    })
-    .catch(() => {
-      const cardImg = document.getElementById('card-tpaita-img');
-      if (cardImg) cardImg.innerHTML = '';
-    });
-
     // ── Product modal ──
     function openProductModal() {
       document.getElementById('productModal').classList.add('open');
