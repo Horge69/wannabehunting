@@ -736,6 +736,78 @@
 
     .footer-links a:hover { color: var(--orange); }
     .footer-copy { font-size: 0.78rem; color: rgba(255,255,255,0.25); margin-top: 1rem; }
+
+    .footer-legal {
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      margin-top: 0.8rem;
+    }
+    .footer-legal a {
+      color: rgba(255,255,255,0.3);
+      text-decoration: none;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+      transition: color 0.2s;
+    }
+    .footer-legal a:hover { color: var(--orange); }
+
+    /* ── COOKIE BANNER ────────────────────── */
+    #cookie-banner {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 9999;
+      background: rgba(10,18,6,0.97);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 1.2rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    #cookie-banner p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      max-width: 680px;
+      line-height: 1.6;
+    }
+    #cookie-banner p a { color: var(--orange); }
+    .cookie-btns { display: flex; gap: 0.8rem; flex-shrink: 0; flex-wrap: wrap; }
+    .cookie-btn {
+      padding: 0.6rem 1.4rem;
+      border-radius: 6px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.88rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.15s, background 0.2s;
+    }
+    .cookie-btn:hover { transform: translateY(-1px); }
+    .cookie-btn.accept { background: var(--orange); color: #fff; }
+    .cookie-btn.accept:hover { background: #e8742a; }
+    .cookie-btn.necessary { background: transparent; color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.2); }
+    .cookie-btn.necessary:hover { border-color: var(--muted); color: var(--cream); }
+    .cookie-settings-btn {
+      position: fixed;
+      bottom: 1.2rem; left: 1.2rem;
+      z-index: 9998;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      width: 42px; height: 42px;
+      display: none;
+      align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: border-color 0.2s;
+    }
+    .cookie-settings-btn:hover { border-color: var(--orange); }
   </style>
 </head>
 <body>
@@ -1037,14 +1109,37 @@
       <a href="https://www.tiktok.com/@wannabehunting" target="_blank">TikTok</a>
     </div>
     <div class="footer-copy">© 2026 Wannabehunting. Kaikki oikeudet pidätetään.</div>
+    <div class="footer-legal">
+      <a href="legal/tietosuoja.html">Tietosuoja</a>
+      <a href="legal/kayttoehdot.html">Käyttöehdot</a>
+      <a href="legal/toimitusehdot.html">Toimitusehdot</a>
+      <a href="legal/palautusehdot.html">Palautusehdot</a>
+      <a href="legal/yhteystiedot.html">Yhteystiedot</a>
+      <a href="#" onclick="showCookieBanner(); return false;">Evästeasetukset</a>
+    </div>
   </footer>
 
+  <!-- COOKIE BANNER -->
+  <div id="cookie-banner">
+    <p>
+      Käytämme evästeitä sivuston toimintaan ja käyttökokemuksen parantamiseen.
+      Lue lisää <a href="legal/tietosuoja.html">tietosuojaselosteestamme</a>.
+    </p>
+    <div class="cookie-btns">
+      <button class="cookie-btn necessary" onclick="setCookies('necessary')">Vain välttämättömät</button>
+      <button class="cookie-btn accept" onclick="setCookies('all')">Hyväksy kaikki</button>
+    </div>
+  </div>
+  <button class="cookie-settings-btn" id="cookie-settings-btn" onclick="showCookieBanner()" title="Evästeasetukset">🍪</button>
+
   <script>
+    // ── Sticky nav ──
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 60);
     });
 
+    // ── Email form ──
     function handleSubmit(e) {
       e.preventDefault();
       const btn = e.target.querySelector('button');
@@ -1055,6 +1150,31 @@
       input.disabled = true;
       btn.disabled = true;
     }
+
+    // ── Cookie consent ──
+    function setCookies(level) {
+      localStorage.setItem('wbh_cookie_consent', level);
+      localStorage.setItem('wbh_cookie_date', new Date().toISOString());
+      document.getElementById('cookie-banner').style.display = 'none';
+      const settingsBtn = document.getElementById('cookie-settings-btn');
+      settingsBtn.style.display = 'flex';
+    }
+
+    function showCookieBanner() {
+      document.getElementById('cookie-banner').style.display = 'flex';
+      document.getElementById('cookie-settings-btn').style.display = 'none';
+    }
+
+    // Check existing consent on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const consent = localStorage.getItem('wbh_cookie_consent');
+      const banner = document.getElementById('cookie-banner');
+      const settingsBtn = document.getElementById('cookie-settings-btn');
+      if (consent) {
+        banner.style.display = 'none';
+        settingsBtn.style.display = 'flex';
+      }
+    });
   </script>
 
 </body>
