@@ -808,6 +808,94 @@
       transition: border-color 0.2s;
     }
     .cookie-settings-btn:hover { border-color: var(--orange); }
+
+    /* CONTACT MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(6px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: linear-gradient(145deg, #1a2d10, #0f1a0a);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-top: 3px solid var(--orange);
+      border-radius: 18px;
+      padding: 2.5rem 2.2rem 2rem;
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+      animation: modalIn 0.22s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.92) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem; right: 1.2rem;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.35);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+    .modal-close:hover { color: var(--orange); }
+    .modal-logo {
+      display: flex; align-items: center; gap: 0.7rem;
+      margin-bottom: 1.4rem;
+    }
+    .modal-logo img { width: 36px; height: 36px; object-fit: contain; }
+    .modal-logo span {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.2rem; font-weight: 700;
+      letter-spacing: 2px; color: var(--white);
+      text-transform: uppercase;
+    }
+    .modal h2 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.5rem; font-weight: 700;
+      color: var(--white); letter-spacing: 1px;
+      margin-bottom: 0.4rem;
+    }
+    .modal .modal-sub {
+      font-size: 0.88rem; color: var(--muted);
+      margin-bottom: 1.8rem; line-height: 1.6;
+    }
+    .contact-row {
+      display: flex; align-items: center; gap: 1rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.8rem;
+      text-decoration: none;
+      transition: border-color 0.18s, background 0.18s;
+    }
+    .contact-row:hover { border-color: var(--orange); background: rgba(212,98,26,0.08); }
+    .contact-icon {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      background: rgba(212,98,26,0.18);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .contact-row-info { display: flex; flex-direction: column; }
+    .contact-row-label { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; }
+    .contact-row-value { font-size: 0.97rem; color: var(--cream); font-weight: 600; margin-top: 0.1rem; }
+    .modal-note {
+      font-size: 0.78rem; color: rgba(255,255,255,0.25);
+      margin-top: 1.4rem; text-align: center; line-height: 1.5;
+    }
   </style>
 </head>
 <body>
@@ -905,7 +993,6 @@
         <div class="person-card-body">
           <h3>Jose 🙎</h3>
           <p>Videokuvaaja, editoija ja se joka yleensä kyseenalaistaa Mikon ideat — mutta lähtee silti mukaan.</p>
-          <p style="margin-top:0.5rem;font-size:0.9rem;color:rgba(255,255,255,0.55);">📞 <a href="tel:+358445356409" style="color:rgba(255,255,255,0.55);text-decoration:none;">044-5356409</a></p>
         </div>
       </div>
 
@@ -1082,7 +1169,7 @@
         <strong>Kiinnostuitko? Otathan yhteyttä!</strong><br/>
         Kerro meille tapahtumastasi tai ideastasi ja katsotaan yhdessä miten Wannabehunting sopii mukaan. Vastaamme kysymyksiisi mielellään.
       </p>
-      <a class="btn-outline" href="mailto:wannabehunting69@gmail.com">Ota yhteyttä</a>
+      <button class="btn-outline" onclick="openContactModal()">Ota yhteyttä</button>
     </div>
 
   </section>
@@ -1099,6 +1186,53 @@
       </form>
     </div>
   </section>
+
+  <!-- CONTACT MODAL -->
+  <div class="modal-overlay" id="contactModal" onclick="closeContactModalOnBg(event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Yhteystiedot">
+      <button class="modal-close" onclick="closeContactModal()" aria-label="Sulje">✕</button>
+      <div class="modal-logo">
+        <img src="logo.png" alt="WBH" />
+        <span>WannabeHunting</span>
+      </div>
+      <h2>Otetaan yhteyttä 🤝</h2>
+      <p class="modal-sub">Tapahtuma, yhteistyö tai muu kysely — valitse sinulle sopivin tapa.</p>
+
+      <a class="contact-row" href="mailto:wannabehunting69@gmail.com">
+        <div class="contact-icon">✉️</div>
+        <div class="contact-row-info">
+          <span class="contact-row-label">Yleinen sähköposti</span>
+          <span class="contact-row-value">wannabehunting69@gmail.com</span>
+        </div>
+      </a>
+
+      <a class="contact-row" href="mailto:tapahtumat@wannabehunting.fi">
+        <div class="contact-icon">🎤</div>
+        <div class="contact-row-info">
+          <span class="contact-row-label">Tapahtumat &amp; esiintymiset</span>
+          <span class="contact-row-value">tapahtumat@wannabehunting.fi</span>
+        </div>
+      </a>
+
+      <a class="contact-row" href="mailto:yhteistyo@wannabehunting.fi">
+        <div class="contact-icon">🤝</div>
+        <div class="contact-row-info">
+          <span class="contact-row-label">Yhteistyö &amp; sponsorointi</span>
+          <span class="contact-row-value">yhteistyo@wannabehunting.fi</span>
+        </div>
+      </a>
+
+      <a class="contact-row" href="tel:+358445356409">
+        <div class="contact-icon">📞</div>
+        <div class="contact-row-info">
+          <span class="contact-row-label">Puhelin (Jose)</span>
+          <span class="contact-row-value">044-5356409</span>
+        </div>
+      </a>
+
+      <p class="modal-note">Vastaamme yleensä 1–2 arkipäivän sisällä.<br/>Asennus Juola Oy · Y-tunnus 2944003-4</p>
+    </div>
+  </div>
 
   <!-- FOOTER -->
   <footer>
@@ -1135,6 +1269,20 @@
   <button class="cookie-settings-btn" id="cookie-settings-btn" onclick="showCookieBanner()" title="Evästeasetukset">🍪</button>
 
   <script>
+    // ── Contact modal ──
+    function openContactModal() {
+      document.getElementById('contactModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeContactModal() {
+      document.getElementById('contactModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function closeContactModalOnBg(e) {
+      if (e.target === document.getElementById('contactModal')) closeContactModal();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeContactModal(); });
+
     // ── Sticky nav ──
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
