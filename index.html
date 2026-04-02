@@ -542,6 +542,8 @@
     }
     .size-table tr:last-child td { border-bottom: none; }
     .pmodal-shopify { margin-top: auto; padding-top: 0.5rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #pmodal-product-img img { width:100%; height:100%; object-fit:cover; border-radius: 0 0 0 20px; }
 
     .product-info {
       padding: 1rem 1.1rem;
@@ -1335,13 +1337,16 @@
     <div class="pmodal" role="dialog" aria-modal="true" aria-label="WBH T-paita">
       <button class="pmodal-close" onclick="closeProductModal()" aria-label="Sulje">✕</button>
       <div class="pmodal-body">
-        <div class="pmodal-img">
-          <img src="logo.png" alt="WBH T-paita" style="width:55%;opacity:0.2;filter:invert(1);" />
+        <div class="pmodal-img" id="pmodal-img-wrap">
+          <!-- Tuotekuva ladataan Shopifysta JS:llä -->
+          <div id="pmodal-product-img" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+            <div style="width:40px;height:40px;border:3px solid var(--orange);border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+          </div>
         </div>
         <div class="pmodal-info">
           <span class="pmodal-badge">Printful EU</span>
-          <h2>WBH T-paita</h2>
-          <p class="pmodal-desc">Klassinen unisex-t-paita Wannabehunting-logolla. Laadukas painatus, joka kestää pesua. Mukava istuvuus niin metsässä kuin kaupungilla. 100% puuvilla.</p>
+          <h2 id="pmodal-title">WBH T-paita</h2>
+          <p class="pmodal-desc" id="pmodal-desc">Ladataan...</p>
 
           <div>
             <div class="pmodal-section-title">Kokotaulukko (cm)</div>
@@ -1459,6 +1464,41 @@
   <button class="cookie-settings-btn" id="cookie-settings-btn" onclick="showCookieBanner()" title="Evästeasetukset">🍪</button>
 
   <script>
+    // ── Hae tuotetiedot Shopifysta ──
+    fetch('https://chs050-pp.myshopify.com/api/2024-01/graphql.json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': '59be8f704daac39846903bd32f7652ae'
+      },
+      body: JSON.stringify({ query: `{
+        product(id: "gid://shopify/Product/10696654258514") {
+          title
+          description
+          images(first: 1) { edges { node { url altText } } }
+        }
+      }` })
+    })
+    .then(r => r.json())
+    .then(data => {
+      const p = data.data.product;
+      // Kuva
+      const imgWrap = document.getElementById('pmodal-product-img');
+      if (p.images.edges.length > 0) {
+        const url = p.images.edges[0].node.url;
+        imgWrap.innerHTML = '<img src="' + url + '" alt="' + p.title + '" style="width:100%;height:100%;object-fit:cover;border-radius:0 0 0 20px;" />';
+      } else {
+        imgWrap.innerHTML = '<span style="font-size:5rem;opacity:0.15">👕</span>';
+      }
+      // Kuvaus (käännetty suomeksi alla)
+      const descEl = document.getElementById('pmodal-desc');
+      if (descEl && p.description) descEl.textContent = p.description;
+    })
+    .catch(() => {
+      document.getElementById('pmodal-product-img').innerHTML = '<span style="font-size:5rem;opacity:0.15">👕</span>';
+      document.getElementById('pmodal-desc').textContent = 'Klassinen unisex-t-paita Wannabehunting-logolla. Laadukas painatus, mukava istuvuus.';
+    });
+
     // ── Product modal ──
     function openProductModal() {
       document.getElementById('productModal').classList.add('open');
