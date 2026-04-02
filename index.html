@@ -455,15 +455,20 @@
       transition: background 0.15s;
     }
     .lightbox-close:hover { background: var(--orange); }
-    .pmodal-shopify-main { position: relative; }
-    .pmodal-zoom-hint {
-      text-align: center;
-      font-size: 0.72rem;
-      color: rgba(255,255,255,0.3);
-      padding: 0.4rem 0 0.2rem;
+    .pmodal-shopify-main { position: relative; display: flex; flex-direction: column; }
+    .pmodal-zoom-btn {
+      margin: 0.6rem auto 0.4rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.55);
+      border-radius: 8px;
+      padding: 0.4rem 1.1rem;
+      font-size: 0.78rem;
+      cursor: pointer;
       letter-spacing: 0.5px;
-      pointer-events: none;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
+    .pmodal-zoom-btn:hover { background: rgba(212,98,26,0.15); border-color: var(--orange); color: var(--orange); }
 
     /* PRODUCT MODAL */
     .pmodal-overlay {
@@ -1213,13 +1218,13 @@
     <div class="shop-category-title">👕 Merch — Printful</div>
     <div class="product-grid">
 
-      <div class="product-card has-modal" id="tpaita-card">
+      <div class="product-card has-modal" id="tpaita-card" onclick="openProductModal()">
         <div class="product-badge printful">Printful</div>
         <div class="product-info">
           <h3>Make Hiace Great Again T-paita</h3>
           <p class="product-desc">Oversized unisex-paita logolla. Laadukas painatus, mukava istuvuus.</p>
           <!-- SHOPIFY BUY BUTTON -->
-          <div class="shopify-buy-btn-wrap">
+          <div class="shopify-buy-btn-wrap" onclick="event.stopPropagation()">
             <div id='product-component-1775163891947'></div>
           </div>
         </div>
@@ -1385,7 +1390,7 @@
         <!-- Vasen: Shopify-komponentti kuvakarusellilla + värinvalinnalla -->
         <div class="pmodal-shopify-main" onclick="event.stopPropagation()">
           <div id='product-component-modal-tpaita' style="width:100%;"></div>
-          <div class="pmodal-zoom-hint">🔍 Klikkaa kuvaa suurentaaksesi</div>
+          <button class="pmodal-zoom-btn" onclick="openLightbox()">🔍 Suurenna kuva</button>
         </div>
         <!-- Oikea: Suomenkieliset tiedot -->
         <div class="pmodal-info">
@@ -1505,67 +1510,17 @@
 
   <script>
     // ── Lightbox ──
-    function openLightboxFromImg(img) {
-      const src = img.src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|1024x1024|2048x2048|master)(\.\w+)$/, '_2048x2048$2');
-      document.getElementById('lightbox-img').src = src;
+    function openLightbox() {
+      const modalComp = document.getElementById('product-component-modal-tpaita');
+      const img = modalComp && modalComp.querySelector('img');
+      if (!img || !img.src) return;
+      const bigSrc = img.src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande)\./, '_2048x2048.');
+      document.getElementById('lightbox-img').src = bigSrc;
       document.getElementById('lightbox').classList.add('open');
-      document.body.style.overflow = 'hidden';
     }
     function closeLightbox() {
       document.getElementById('lightbox').classList.remove('open');
-      if (!document.getElementById('productModal').classList.contains('open') &&
-          !document.getElementById('contactModal').classList.contains('open')) {
-        document.body.style.overflow = '';
-      }
     }
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') { closeProductModal(); closeContactModal(); closeLightbox(); }
-    });
-
-    // ── Shopify-kuvien klikkaukset (MutationObserver) ──
-    function attachShopifyImageClicks() {
-      // Kortin kuva → avaa modaali
-      const cardComp = document.getElementById('product-component-1775163891947');
-      if (cardComp) {
-        const observer = new MutationObserver(() => {
-          const imgWrapper = cardComp.querySelector('.shopify-buy__product-img-wrapper, .shopify-buy__product__variant-img, img');
-          if (imgWrapper) {
-            imgWrapper.style.cursor = 'pointer';
-            imgWrapper.addEventListener('click', (e) => { e.stopPropagation(); openProductModal(); }, { once: false });
-            observer.disconnect();
-          }
-        });
-        observer.observe(cardComp, { childList: true, subtree: true });
-      }
-
-      // Modaalin kuva → avaa lightbox
-      const modalComp = document.getElementById('product-component-modal-tpaita');
-      if (modalComp) {
-        const mObserver = new MutationObserver(() => {
-          const imgs = modalComp.querySelectorAll('.shopify-buy__product-img-wrapper img, .shopify-buy__product__variant-img, .shopify-buy__carousel img');
-          if (imgs.length > 0) {
-            imgs.forEach(img => {
-              img.style.cursor = 'zoom-in';
-              img.addEventListener('click', (e) => { e.stopPropagation(); openLightboxFromImg(img); });
-            });
-            // Seuraa myös tulevia kuvia (värinvaihto)
-            const imgObserver = new MutationObserver(() => {
-              modalComp.querySelectorAll('img').forEach(img => {
-                if (!img.dataset.lightboxBound) {
-                  img.dataset.lightboxBound = '1';
-                  img.style.cursor = 'zoom-in';
-                  img.addEventListener('click', (e) => { e.stopPropagation(); openLightboxFromImg(img); });
-                }
-              });
-            });
-            imgObserver.observe(modalComp, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
-            mObserver.disconnect();
-          }
-        });
-        mObserver.observe(modalComp, { childList: true, subtree: true });
-      }
-    }
-    attachShopifyImageClicks();
 
     // ── Product modal ──
     function openProductModal() {
@@ -1579,7 +1534,9 @@
     function closePModalOnBg(e) {
       if (e.target === document.getElementById('productModal')) closeProductModal();
     }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeProductModal(); closeContactModal(); } });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeProductModal(); closeContactModal(); closeLightbox(); }
+    });
 
     // ── Contact modal ──
     function openContactModal() {
@@ -1593,7 +1550,6 @@
     function closeContactModalOnBg(e) {
       if (e.target === document.getElementById('contactModal')) closeContactModal();
     }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeContactModal(); });
 
     // ── Sticky nav ──
     const nav = document.getElementById('nav');
