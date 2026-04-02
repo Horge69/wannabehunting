@@ -401,7 +401,147 @@
       align-items: center;
       justify-content: center;
       font-size: 4rem;
+      cursor: pointer;
     }
+
+    .product-card.has-modal { cursor: pointer; }
+    .product-card.has-modal .product-img-inner {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      transition: opacity 0.2s;
+    }
+    .product-card.has-modal:hover .product-img-inner { opacity: 0.85; }
+    .product-view-hint {
+      position: absolute;
+      bottom: 10px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.65);
+      color: #fff;
+      font-size: 0.72rem;
+      font-family: 'Oswald', sans-serif;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .product-card.has-modal:hover .product-view-hint { opacity: 1; }
+
+    /* PRODUCT MODAL */
+    .pmodal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .pmodal-overlay.open { display: flex; }
+    .pmodal {
+      background: linear-gradient(145deg, #1c3012, #0f1a0a);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 32px 100px rgba(0,0,0,0.8);
+      animation: modalIn 0.22s cubic-bezier(.34,1.56,.64,1);
+    }
+    .pmodal-close {
+      position: sticky;
+      top: 1rem;
+      float: right;
+      margin: 1rem 1rem 0 0;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: rgba(255,255,255,0.6);
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      z-index: 10;
+    }
+    .pmodal-close:hover { background: var(--orange); color: #fff; }
+    .pmodal-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      clear: both;
+    }
+    @media (max-width: 560px) { .pmodal-body { grid-template-columns: 1fr; } }
+    .pmodal-img {
+      background: #111d0a;
+      border-radius: 0 0 0 20px;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 260px;
+      font-size: 6rem;
+    }
+    @media (max-width: 560px) { .pmodal-img { border-radius: 0; min-height: 200px; } }
+    .pmodal-info {
+      padding: 2rem 1.8rem 2rem 1.6rem;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .pmodal-badge {
+      display: inline-block;
+      background: #6c3fc5;
+      color: #fff;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+    .pmodal-info h2 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.6rem;
+      color: var(--white);
+      letter-spacing: 1px;
+      line-height: 1.2;
+    }
+    .pmodal-info .pmodal-desc {
+      font-size: 0.9rem;
+      color: var(--cream);
+      line-height: 1.7;
+    }
+    .pmodal-section-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.78rem;
+      color: var(--orange);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .size-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .size-table th {
+      background: rgba(212,98,26,0.15);
+      color: var(--orange);
+      font-family: 'Oswald', sans-serif;
+      letter-spacing: 1px;
+      padding: 6px 10px;
+      text-align: left;
+      font-size: 0.75rem;
+    }
+    .size-table td {
+      padding: 5px 10px;
+      color: var(--cream);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .size-table tr:last-child td { border-bottom: none; }
+    .pmodal-shopify { margin-top: auto; padding-top: 0.5rem; }
 
     .product-info {
       padding: 1rem 1.1rem;
@@ -1022,14 +1162,19 @@
     <div class="shop-category-title">👕 Merch — Printful</div>
     <div class="product-grid">
 
-      <div class="product-card">
+      <div class="product-card has-modal" onclick="openProductModal()">
         <div class="product-badge printful">Printful</div>
-        <div class="product-img">👕</div>
+        <div class="product-img">
+          <div class="product-img-inner">
+            <img src="logo.png" alt="WBH T-paita" style="width:60%;opacity:0.18;filter:invert(1);" />
+            <span class="product-view-hint">🔍 Katso lisätiedot</span>
+          </div>
+        </div>
         <div class="product-info">
           <h3>WBH T-paita</h3>
           <p class="product-desc">Klassinen unisex-paita logolla. Laadukas painatus, mukava istuvuus.</p>
           <!-- SHOPIFY BUY BUTTON -->
-          <div class="shopify-buy-btn-wrap">
+          <div class="shopify-buy-btn-wrap" onclick="event.stopPropagation()">
             <div id='product-component-1775163891947'></div>
           </div>
         </div>
@@ -1185,6 +1330,53 @@
     </div>
   </section>
 
+  <!-- PRODUCT MODAL: WBH T-paita -->
+  <div class="pmodal-overlay" id="productModal" onclick="closePModalOnBg(event)">
+    <div class="pmodal" role="dialog" aria-modal="true" aria-label="WBH T-paita">
+      <button class="pmodal-close" onclick="closeProductModal()" aria-label="Sulje">✕</button>
+      <div class="pmodal-body">
+        <div class="pmodal-img">
+          <img src="logo.png" alt="WBH T-paita" style="width:55%;opacity:0.2;filter:invert(1);" />
+        </div>
+        <div class="pmodal-info">
+          <span class="pmodal-badge">Printful EU</span>
+          <h2>WBH T-paita</h2>
+          <p class="pmodal-desc">Klassinen unisex-t-paita Wannabehunting-logolla. Laadukas painatus, joka kestää pesua. Mukava istuvuus niin metsässä kuin kaupungilla. 100% puuvilla.</p>
+
+          <div>
+            <div class="pmodal-section-title">Kokotaulukko (cm)</div>
+            <table class="size-table">
+              <thead>
+                <tr><th>Koko</th><th>Rinta</th><th>Pituus</th><th>Hiha</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>S</td><td>91–96</td><td>69</td><td>20</td></tr>
+                <tr><td>M</td><td>96–101</td><td>72</td><td>21</td></tr>
+                <tr><td>L</td><td>101–106</td><td>74</td><td>22</td></tr>
+                <tr><td>XL</td><td>106–111</td><td>76</td><td>23</td></tr>
+                <tr><td>2XL</td><td>111–116</td><td>78</td><td>24</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <div class="pmodal-section-title">Materiaalit &amp; toimitus</div>
+            <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;">
+              100% ringspun-puuvilla · Painatus: DTG<br/>
+              Toimitus EU-varastolta 5–10 arkipäivää<br/>
+              Ilmainen palautus 14 päivän sisällä
+            </p>
+          </div>
+
+          <div class="pmodal-shopify" onclick="event.stopPropagation()">
+            <div class="pmodal-section-title">Tilaa</div>
+            <div id='product-component-modal-tpaita'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- CONTACT MODAL -->
   <div class="modal-overlay" id="contactModal" onclick="closeContactModalOnBg(event)">
     <div class="modal" role="dialog" aria-modal="true" aria-label="Yhteystiedot">
@@ -1267,6 +1459,20 @@
   <button class="cookie-settings-btn" id="cookie-settings-btn" onclick="showCookieBanner()" title="Evästeasetukset">🍪</button>
 
   <script>
+    // ── Product modal ──
+    function openProductModal() {
+      document.getElementById('productModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeProductModal() {
+      document.getElementById('productModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function closePModalOnBg(e) {
+      if (e.target === document.getElementById('productModal')) closeProductModal();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeProductModal(); closeContactModal(); } });
+
     // ── Contact modal ──
     function openContactModal() {
       document.getElementById('contactModal').classList.add('open');
@@ -1326,6 +1532,53 @@
   </script>
 
   <!-- SHOPIFY BUY BUTTON -->
+  <script type="text/javascript">
+  /*<![CDATA[*/
+  (function () {
+    var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
+    if (window.ShopifyBuy) {
+      if (window.ShopifyBuy.UI) { ShopifyBuyInit(); } else { loadScript(); }
+    } else { loadScript(); }
+    function loadScript() {
+      var script = document.createElement('script');
+      script.async = true; script.src = scriptURL;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
+      script.onload = ShopifyBuyInit;
+    }
+    function ShopifyBuyInit() {
+      var client = ShopifyBuy.buildClient({
+        domain: 'chs050-pp.myshopify.com',
+        storefrontAccessToken: '59be8f704daac39846903bd32f7652ae',
+      });
+      ShopifyBuy.UI.onReady(client).then(function (ui) {
+        // Modaalin nappi
+        ui.createComponent('product', {
+          id: '10696654258514',
+          node: document.getElementById('product-component-modal-tpaita'),
+          moneyFormat: '%E2%82%AC%7B%7Bamount_with_comma_separator%7D%7D',
+          options: {
+            "product": {
+              "styles": {
+                "button": { ":hover": {"background-color":"#bf5817"}, "background-color":"#d4621a", ":focus":{"background-color":"#bf5817"}, "width":"100%" }
+              },
+              "contents": { "img": false, "title": false, "price": true },
+              "text": { "button": "Lisää koriin" }
+            },
+            "cart": {
+              "styles": { "button": { "background-color":"#d4621a", ":hover":{"background-color":"#bf5817"} } },
+              "text": { "total":"Yhteensä", "button":"Kassalle" }
+            },
+            "toggle": { "styles": { "toggle": { "background-color":"#d4621a" } } }
+          }
+        });
+      });
+      document.dispatchEvent(new Event('shopify:ui:ready'));
+    }
+  })();
+  /*]]>*/
+  </script>
+
+  <!-- SHOPIFY BUY BUTTON (kortti) -->
   <script type="text/javascript">
   /*<![CDATA[*/
   (function () {
