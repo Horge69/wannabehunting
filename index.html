@@ -404,30 +404,71 @@
       cursor: pointer;
     }
 
-    .product-card.has-modal { cursor: pointer; }
-    .product-card.has-modal .product-img-inner {
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      position: relative;
-      transition: opacity 0.2s;
-    }
-    .product-card.has-modal:hover .product-img-inner { opacity: 0.85; }
-    .product-view-hint {
-      position: absolute;
-      bottom: 10px; left: 50%; transform: translateX(-50%);
-      background: rgba(0,0,0,0.65);
-      color: #fff;
-      font-size: 0.72rem;
+    .product-card.has-modal { cursor: default; }
+    /* Klikkausnappi modaalin avaamiseen */
+    .product-modal-trigger {
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+      width: 100%;
+      background: rgba(212,98,26,0.08);
+      border: 1px solid rgba(212,98,26,0.25);
+      border-radius: 8px;
+      padding: 0.55rem 1rem;
       font-family: 'Oswald', sans-serif;
+      font-size: 0.82rem;
       letter-spacing: 1px;
-      padding: 4px 12px;
-      border-radius: 20px;
-      opacity: 0;
-      transition: opacity 0.2s;
-      white-space: nowrap;
-      pointer-events: none;
+      color: var(--orange);
+      cursor: pointer;
+      margin-bottom: 0.6rem;
+      transition: background 0.18s, border-color 0.18s;
+      text-transform: uppercase;
     }
-    .product-card.has-modal:hover .product-view-hint { opacity: 1; }
+    .product-modal-trigger:hover { background: rgba(212,98,26,0.18); border-color: var(--orange); }
+
+    /* LIGHTBOX */
+    .lightbox-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .lightbox-overlay.open { display: flex; }
+    .lightbox-overlay img {
+      max-width: 92vw;
+      max-height: 92vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 0 80px rgba(0,0,0,0.8);
+      animation: modalIn 0.18s ease;
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 1.2rem; right: 1.4rem;
+      background: rgba(255,255,255,0.1);
+      border: none; color: #fff;
+      width: 40px; height: 40px;
+      border-radius: 50%; font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .lightbox-close:hover { background: var(--orange); }
+    /* Suurennusnappula modaalin kuvalle */
+    .pmodal-zoom-btn {
+      position: absolute;
+      bottom: 10px; right: 10px;
+      background: rgba(0,0,0,0.55);
+      border: none; color: #fff;
+      width: 34px; height: 34px;
+      border-radius: 8px; font-size: 1rem;
+      cursor: zoom-in;
+      transition: background 0.15s;
+      z-index: 5;
+    }
+    .pmodal-zoom-btn:hover { background: var(--orange); }
+    .pmodal-shopify-main { position: relative; }
 
     /* PRODUCT MODAL */
     .pmodal-overlay {
@@ -1177,13 +1218,14 @@
     <div class="shop-category-title">👕 Merch — Printful</div>
     <div class="product-grid">
 
-      <div class="product-card has-modal" onclick="openProductModal()">
+      <div class="product-card has-modal">
         <div class="product-badge printful">Printful</div>
         <div class="product-info">
+          <button class="product-modal-trigger" onclick="openProductModal()">🔍 Katso lisätiedot &amp; koot</button>
           <h3>Make Hiace Great Again T-paita</h3>
           <p class="product-desc">Oversized unisex-paita logolla. Laadukas painatus, mukava istuvuus.</p>
           <!-- SHOPIFY BUY BUTTON -->
-          <div class="shopify-buy-btn-wrap" onclick="event.stopPropagation()">
+          <div class="shopify-buy-btn-wrap">
             <div id='product-component-1775163891947'></div>
           </div>
         </div>
@@ -1335,6 +1377,12 @@
     </div>
   </section>
 
+  <!-- LIGHTBOX -->
+  <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt="Tuotekuva" />
+  </div>
+
   <!-- PRODUCT MODAL: WBH T-paita -->
   <div class="pmodal-overlay" id="productModal" onclick="closePModalOnBg(event)">
     <div class="pmodal" role="dialog" aria-modal="true" aria-label="WBH T-paita">
@@ -1343,6 +1391,7 @@
         <!-- Vasen: Shopify-komponentti kuvakarusellilla + värinvalinnalla -->
         <div class="pmodal-shopify-main" onclick="event.stopPropagation()">
           <div id='product-component-modal-tpaita' style="width:100%;"></div>
+          <button class="pmodal-zoom-btn" onclick="openLightbox()" title="Suurenna kuva">⛶</button>
         </div>
         <!-- Oikea: Suomenkieliset tiedot -->
         <div class="pmodal-info">
@@ -1461,6 +1510,24 @@
   <button class="cookie-settings-btn" id="cookie-settings-btn" onclick="showCookieBanner()" title="Evästeasetukset">🍪</button>
 
   <script>
+    // ── Lightbox ──
+    function openLightbox() {
+      // Hae Shopify-komponentin nykyinen tuotekuva
+      const modalEl = document.getElementById('product-component-modal-tpaita');
+      const img = modalEl && modalEl.querySelector('img[src*="cdn.shopify"]');
+      if (!img) return;
+      document.getElementById('lightbox-img').src = img.src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande|1024x1024|2048x2048|master)\./, '_2048x2048.');
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeProductModal(); closeContactModal(); closeLightbox(); }
+    });
+
     // ── Product modal ──
     function openProductModal() {
       document.getElementById('productModal').classList.add('open');
