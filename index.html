@@ -1230,6 +1230,18 @@
         </div>
       </div>
 
+      <div class="product-card has-modal" id="huppari-card" onclick="openHuppariModal()">
+        <div class="product-badge printful">Printful</div>
+        <div class="product-info">
+          <h3>WBH Huppari</h3>
+          <p class="product-desc">Lämmin unisex-huppari WBH-logolla. Paksu fleece, mukava metsäkäyttöön.</p>
+          <!-- SHOPIFY BUY BUTTON -->
+          <div class="shopify-buy-btn-wrap" onclick="event.stopPropagation()">
+            <div id='product-component-huppari'></div>
+          </div>
+        </div>
+      </div>
+
       <div class="product-card">
         <div class="product-badge">Tulossa</div>
         <div class="product-badge printful">Printful</div>
@@ -1390,7 +1402,7 @@
         <!-- Vasen: Shopify-komponentti kuvakarusellilla + värinvalinnalla -->
         <div class="pmodal-shopify-main" onclick="event.stopPropagation()">
           <div id='product-component-modal-tpaita' style="width:100%;"></div>
-          <button class="pmodal-zoom-btn" onclick="openLightbox()">🔍 Suurenna kuva</button>
+          <button class="pmodal-zoom-btn" onclick="openLightboxFromModal('product-component-modal-tpaita')">🔍 Suurenna kuva</button>
         </div>
         <!-- Oikea: Suomenkieliset tiedot -->
         <div class="pmodal-info">
@@ -1418,6 +1430,49 @@
             <div class="pmodal-section-title">Materiaalit &amp; toimitus</div>
             <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;">
               100% ringspun-puuvilla · Painatus: DTG<br/>
+              Toimitus EU-varastolta 5–10 arkipäivää<br/>
+              Ilmainen palautus 14 päivän sisällä
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT MODAL: WBH Huppari -->
+  <div class="pmodal-overlay" id="huppariModal" onclick="closeHuppariModalOnBg(event)">
+    <div class="pmodal" role="dialog" aria-modal="true" aria-label="WBH Huppari">
+      <button class="pmodal-close" onclick="closeHuppariModal()" aria-label="Sulje">✕</button>
+      <div class="pmodal-body">
+        <div class="pmodal-shopify-main" onclick="event.stopPropagation()">
+          <div id='product-component-modal-huppari' style="width:100%;"></div>
+          <button class="pmodal-zoom-btn" onclick="openLightboxFromModal('product-component-modal-huppari')">🔍 Suurenna kuva</button>
+        </div>
+        <div class="pmodal-info">
+          <span class="pmodal-badge">Printful EU</span>
+          <h2>WBH Huppari</h2>
+          <p class="pmodal-desc">Lämmin unisex-huppari Wannabehunting-logolla. Paksu fleece-materiaali pitää lämpimänä pitkillä metsäretkillä. Sopii yhtä hyvin kaupungille kuin metsään.</p>
+
+          <div>
+            <div class="pmodal-section-title">Kokotaulukko (cm)</div>
+            <table class="size-table">
+              <thead>
+                <tr><th>Koko</th><th>Rinta</th><th>Pituus</th><th>Hiha</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>S</td><td>96–101</td><td>67</td><td>60</td></tr>
+                <tr><td>M</td><td>101–106</td><td>70</td><td>62</td></tr>
+                <tr><td>L</td><td>106–111</td><td>72</td><td>64</td></tr>
+                <tr><td>XL</td><td>111–116</td><td>74</td><td>66</td></tr>
+                <tr><td>2XL</td><td>116–121</td><td>76</td><td>68</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <div class="pmodal-section-title">Materiaalit &amp; toimitus</div>
+            <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;">
+              80% puuvilla, 20% polyesteri · Fleece-vuori<br/>
               Toimitus EU-varastolta 5–10 arkipäivää<br/>
               Ilmainen palautus 14 päivän sisällä
             </p>
@@ -1510,16 +1565,67 @@
 
   <script>
     // ── Lightbox ──
-    function openLightbox() {
-      const modalComp = document.getElementById('product-component-modal-tpaita');
-      const img = modalComp && modalComp.querySelector('img');
-      if (!img || !img.src) return;
-      const bigSrc = img.src.replace(/_(pico|icon|thumb|small|compact|medium|large|grande)\./, '_2048x2048.');
+    function openLightboxFromModal(compId) {
+      const comp = document.getElementById(compId);
+      if (!comp) return;
+      const selectors = [
+        '.shopify-buy__carousel-item--selected img',
+        '.shopify-buy__product-img',
+        '.shopify-buy__carousel img',
+        '.shopify-buy__product-img-wrapper img',
+        'img[src*="shopify"]',
+        'img[src*="cdn"]',
+        'img'
+      ];
+      let img = null;
+      for (const sel of selectors) {
+        img = comp.querySelector(sel);
+        if (img && img.src && img.src.startsWith('http')) break;
+      }
+      if (!img || !img.src) {
+        alert('Kuva ei ole vielä latautunut — kokeile uudelleen hetken kuluttua.');
+        return;
+      }
+      const bigSrc = img.src
+        .replace(/_(pico|icon|thumb|small|compact|medium|large|grande|1024x1024)(\.\w+)/, '_2048x2048$2')
+        .replace(/&width=\d+/, '&width=2048');
       document.getElementById('lightbox-img').src = bigSrc;
       document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function openLightbox() {
+      const modalComp = document.getElementById('product-component-modal-tpaita');
+      if (!modalComp) return;
+      // Kokeillaan eri selektoreita järjestyksessä
+      const selectors = [
+        '.shopify-buy__product-img',
+        '.shopify-buy__carousel-item--selected img',
+        '.shopify-buy__carousel img',
+        '.shopify-buy__product-img-wrapper img',
+        'img[src*="shopify"]',
+        'img[src*="cdn"]',
+        'img'
+      ];
+      let img = null;
+      for (const sel of selectors) {
+        img = modalComp.querySelector(sel);
+        if (img && img.src && img.src.startsWith('http')) break;
+      }
+      if (!img || !img.src) {
+        alert('Kuva ei ole vielä latautunut — kokeile uudelleen hetken kuluttua.');
+        return;
+      }
+      // Haetaan mahdollisimman iso versio
+      const bigSrc = img.src
+        .replace(/_(pico|icon|thumb|small|compact|medium|large|grande|1024x1024)(\.\w+(\?.*)?$)/, '_2048x2048$2')
+        .replace(/&width=\d+/, '&width=2048');
+      document.getElementById('lightbox-img').src = bigSrc;
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
     function closeLightbox() {
       document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
     }
 
     // ── Product modal ──
@@ -1535,8 +1641,21 @@
       if (e.target === document.getElementById('productModal')) closeProductModal();
     }
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') { closeProductModal(); closeContactModal(); closeLightbox(); }
+      if (e.key === 'Escape') { closeProductModal(); closeHuppariModal(); closeContactModal(); closeLightbox(); }
     });
+
+    // ── Huppari modal ──
+    function openHuppariModal() {
+      document.getElementById('huppariModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeHuppariModal() {
+      document.getElementById('huppariModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function closeHuppariModalOnBg(e) {
+      if (e.target === document.getElementById('huppariModal')) closeHuppariModal();
+    }
 
     // ── Contact modal ──
     function openContactModal() {
