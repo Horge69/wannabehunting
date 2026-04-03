@@ -1564,65 +1564,42 @@
   <button class="cookie-settings-btn" id="cookie-settings-btn" onclick="showCookieBanner()" title="Evästeasetukset">🍪</button>
 
   <script>
-    // ── Lightbox ──
+    // ── Lightbox — kuvat haetaan Storefront API:sta ──
+    var wbhProductImages = {};
+
+    function fetchProductImage(productGid, key) {
+      fetch('https://chs050-pp.myshopify.com/api/2024-01/graphql.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': '59be8f704daac39846903bd32f7652ae'
+        },
+        body: JSON.stringify({ query: '{ product(id: "' + productGid + '") { images(first:1){ edges{ node{ url } } } } }' })
+      })
+      .then(r => r.json())
+      .then(data => {
+        var edges = data.data.product.images.edges;
+        if (edges.length > 0) wbhProductImages[key] = edges[0].node.url;
+      })
+      .catch(() => {});
+    }
+
+    // Haetaan kuvat sivun latauksen yhteydessä
+    fetchProductImage('gid://shopify/Product/10696654258514', 'tpaita');
+    fetchProductImage('gid://shopify/Product/10696839102802', 'huppari');
+
     function openLightboxFromModal(compId) {
-      const comp = document.getElementById(compId);
-      if (!comp) return;
-      const selectors = [
-        '.shopify-buy__carousel-item--selected img',
-        '.shopify-buy__product-img',
-        '.shopify-buy__carousel img',
-        '.shopify-buy__product-img-wrapper img',
-        'img[src*="shopify"]',
-        'img[src*="cdn"]',
-        'img'
-      ];
-      let img = null;
-      for (const sel of selectors) {
-        img = comp.querySelector(sel);
-        if (img && img.src && img.src.startsWith('http')) break;
-      }
-      if (!img || !img.src) {
-        alert('Kuva ei ole vielä latautunut — kokeile uudelleen hetken kuluttua.');
+      var key = compId.indexOf('huppari') !== -1 ? 'huppari' : 'tpaita';
+      var src = wbhProductImages[key];
+      if (!src) {
+        alert('Kuva ei ole vielä latautunut — kokeile hetken kuluttua.');
         return;
       }
-      const bigSrc = img.src
-        .replace(/_(pico|icon|thumb|small|compact|medium|large|grande|1024x1024)(\.\w+)/, '_2048x2048$2')
-        .replace(/&width=\d+/, '&width=2048');
-      document.getElementById('lightbox-img').src = bigSrc;
+      document.getElementById('lightbox-img').src = src;
       document.getElementById('lightbox').classList.add('open');
       document.body.style.overflow = 'hidden';
     }
-    function openLightbox() {
-      const modalComp = document.getElementById('product-component-modal-tpaita');
-      if (!modalComp) return;
-      // Kokeillaan eri selektoreita järjestyksessä
-      const selectors = [
-        '.shopify-buy__product-img',
-        '.shopify-buy__carousel-item--selected img',
-        '.shopify-buy__carousel img',
-        '.shopify-buy__product-img-wrapper img',
-        'img[src*="shopify"]',
-        'img[src*="cdn"]',
-        'img'
-      ];
-      let img = null;
-      for (const sel of selectors) {
-        img = modalComp.querySelector(sel);
-        if (img && img.src && img.src.startsWith('http')) break;
-      }
-      if (!img || !img.src) {
-        alert('Kuva ei ole vielä latautunut — kokeile uudelleen hetken kuluttua.');
-        return;
-      }
-      // Haetaan mahdollisimman iso versio
-      const bigSrc = img.src
-        .replace(/_(pico|icon|thumb|small|compact|medium|large|grande|1024x1024)(\.\w+(\?.*)?$)/, '_2048x2048$2')
-        .replace(/&width=\d+/, '&width=2048');
-      document.getElementById('lightbox-img').src = bigSrc;
-      document.getElementById('lightbox').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
+
     function closeLightbox() {
       document.getElementById('lightbox').classList.remove('open');
       document.body.style.overflow = '';
