@@ -1219,10 +1219,9 @@
     <div class="product-grid">
 
       <div class="product-card has-modal" id="tpaita-card" onclick="openProductModal()">
-        <div class="product-badge printful">Printful</div>
         <div class="product-info">
-          <h3>Make Hiace Great Again T-paita</h3>
-          <p class="product-desc">Oversized unisex-paita logolla. Laadukas painatus, mukava istuvuus.</p>
+          <h3 id="tpaita-title">Make Hiace Great Again T-paita</h3>
+          <p class="product-desc" id="tpaita-desc"></p>
           <!-- SHOPIFY BUY BUTTON -->
           <div class="shopify-buy-btn-wrap" onclick="event.stopPropagation()">
             <div id='product-component-1775163891947'></div>
@@ -1231,10 +1230,9 @@
       </div>
 
       <div class="product-card has-modal" id="huppari-card" onclick="openHuppariModal()">
-        <div class="product-badge printful">Printful</div>
         <div class="product-info">
-          <h3>WBH Huppari</h3>
-          <p class="product-desc">Lämmin unisex-huppari WBH-logolla. Paksu fleece, mukava metsäkäyttöön.</p>
+          <h3 id="huppari-title">WBH Huppari</h3>
+          <p class="product-desc" id="huppari-desc"></p>
           <!-- SHOPIFY BUY BUTTON -->
           <div class="shopify-buy-btn-wrap" onclick="event.stopPropagation()">
             <div id='product-component-1775199270770'></div>
@@ -1244,7 +1242,6 @@
 
       <div class="product-card">
         <div class="product-badge">Tulossa</div>
-        <div class="product-badge printful">Printful</div>
         <div class="product-info">
           <h3>WBH Lippalakki</h3>
           <p class="product-desc">Brodeerattu WBH-logo. Sopii metsälle ja kaupungille.</p>
@@ -1258,12 +1255,9 @@
 
       <div class="product-card">
         <div class="product-badge">Tulossa</div>
-        <div class="product-badge printful">Printful</div>
         <div class="product-info">
-          <h3>WBH Huppari</h3>
-          <p class="product-desc">Paksu fleece-huppari WBH-logolla. Lämmin metsäkäyttöön.</p>
-          <div class="product-price">~54,90 €</div>
-          <!-- SHOPIFY BUY BUTTON -->
+          <h3>WBH Huppari — uudet värit</h3>
+          <p class="product-desc">Lisää värivaihtoehtoja tulossa.</p>
           <div class="shopify-buy-btn-wrap">
             <div class="shopify-btn-placeholder">🛒 Tulossa pian</div>
           </div>
@@ -1408,7 +1402,7 @@
         <div class="pmodal-info">
           <span class="pmodal-badge">Printful EU</span>
           <h2>WBH T-paita</h2>
-          <p class="pmodal-desc" id="pmodal-desc">Klassinen unisex-t-paita Wannabehunting-logolla. Laadukas DTG-painatus joka kestää pesua. Mukava istuvuus niin metsäretkellä kuin kaupungilla.</p>
+          <p class="pmodal-desc" id="pmodal-desc"></p>
 
           <div>
             <div class="pmodal-section-title">Kokotaulukko (cm)</div>
@@ -1451,7 +1445,7 @@
         <div class="pmodal-info">
           <span class="pmodal-badge">Printful EU</span>
           <h2>WBH Huppari</h2>
-          <p class="pmodal-desc">Lämmin unisex-huppari Wannabehunting-logolla. Paksu fleece-materiaali pitää lämpimänä pitkillä metsäretkillä. Sopii yhtä hyvin kaupungille kuin metsään.</p>
+          <p class="pmodal-desc" id="huppari-modal-desc"></p>
 
           <div>
             <div class="pmodal-section-title">Kokotaulukko (cm)</div>
@@ -1567,26 +1561,36 @@
     // ── Lightbox — kuvat haetaan Storefront API:sta ──
     var wbhProductImages = {};
 
-    function fetchProductImage(productGid, key) {
+    function fetchProductData(productGid, key) {
       fetch('https://chs050-pp.myshopify.com/api/2024-01/graphql.json', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-Shopify-Storefront-Access-Token': '59be8f704daac39846903bd32f7652ae'
         },
-        body: JSON.stringify({ query: '{ product(id: "' + productGid + '") { images(first:1){ edges{ node{ url } } } } }' })
+        body: JSON.stringify({ query: '{ product(id: "' + productGid + '") { title description images(first:1){ edges{ node{ url } } } } }' })
       })
       .then(r => r.json())
       .then(data => {
-        var edges = data.data.product.images.edges;
-        if (edges.length > 0) wbhProductImages[key] = edges[0].node.url;
+        var p = data.data.product;
+        // Tallenna kuva lightboxia varten
+        if (p.images.edges.length > 0) wbhProductImages[key] = p.images.edges[0].node.url;
+        // Injektoi kuvaus korttiin ja modaaliin
+        var desc = p.description || '';
+        if (key === 'tpaita') {
+          var el = document.getElementById('tpaita-desc'); if (el) el.textContent = desc;
+          var mel = document.getElementById('pmodal-desc'); if (mel) mel.textContent = desc;
+        } else if (key === 'huppari') {
+          var el2 = document.getElementById('huppari-desc'); if (el2) el2.textContent = desc;
+          var mel2 = document.getElementById('huppari-modal-desc'); if (mel2) mel2.textContent = desc;
+        }
       })
       .catch(() => {});
     }
 
-    // Haetaan kuvat sivun latauksen yhteydessä
-    fetchProductImage('gid://shopify/Product/10696654258514', 'tpaita');
-    fetchProductImage('gid://shopify/Product/10696839102802', 'huppari');
+    // Haetaan tuotetiedot sivun latauksen yhteydessä
+    fetchProductData('gid://shopify/Product/10696654258514', 'tpaita');
+    fetchProductData('gid://shopify/Product/10696839102802', 'huppari');
 
     function openLightboxFromModal(compId) {
       var key = compId.indexOf('huppari') !== -1 ? 'huppari' : 'tpaita';
