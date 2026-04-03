@@ -1237,7 +1237,7 @@
           <p class="product-desc">Lämmin unisex-huppari WBH-logolla. Paksu fleece, mukava metsäkäyttöön.</p>
           <!-- SHOPIFY BUY BUTTON -->
           <div class="shopify-buy-btn-wrap" onclick="event.stopPropagation()">
-            <div id='product-component-huppari'></div>
+            <div id='product-component-1775199270770'></div>
           </div>
         </div>
       </div>
@@ -1872,6 +1872,84 @@
               }
             }
           },
+        });
+      });
+    }
+  })();
+  /*]]>*/
+  </script>
+
+  <!-- SHOPIFY BUY BUTTON: Huppari -->
+  <script type="text/javascript">
+  /*<![CDATA[*/
+  (function () {
+    var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
+    if (window.ShopifyBuy) {
+      if (window.ShopifyBuy.UI) { ShopifyBuyInit(); } else { loadScript(); }
+    } else { loadScript(); }
+    function loadScript() {
+      var script = document.createElement('script');
+      script.async = true; script.src = scriptURL;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
+      script.onload = ShopifyBuyInit;
+    }
+    function ShopifyBuyInit() {
+      var client = ShopifyBuy.buildClient({
+        domain: 'chs050-pp.myshopify.com',
+        storefrontAccessToken: '59be8f704daac39846903bd32f7652ae',
+      });
+      ShopifyBuy.UI.onReady(client).then(function (ui) {
+        // Kortin nappi
+        ui.createComponent('product', {
+          id: '10696839102802',
+          node: document.getElementById('product-component-1775199270770'),
+          moneyFormat: '%E2%82%AC%7B%7Bamount_with_comma_separator%7D%7D',
+          options: {
+            "product": {
+              "styles": {
+                "product": { "@media (min-width: 601px)": { "max-width": "calc(25% - 20px)", "margin-left": "20px", "margin-bottom": "50px" } },
+                "button": { ":hover": {"background-color":"#bf5817"}, "background-color":"#d4621a", ":focus": {"background-color":"#bf5817"} }
+              },
+              "text": { "button": "Lisää koriin" }
+            },
+            "modalProduct": {
+              "contents": { "img": false, "imgWithCarousel": true, "button": false, "buttonWithQuantity": true },
+              "styles": { "button": { ":hover": {"background-color":"#bf5817"}, "background-color":"#d4621a", ":focus": {"background-color":"#bf5817"} } },
+              "text": { "button": "Lisää koriin" }
+            },
+            "cart": {
+              "styles": { "button": { ":hover": {"background-color":"#bf5817"}, "background-color":"#d4621a", ":focus": {"background-color":"#bf5817"} } },
+              "text": { "total": "Yhteensä", "button": "Kassalle" }
+            },
+            "toggle": { "styles": { "toggle": { "background-color":"#d4621a", ":hover": {"background-color":"#bf5817"}, ":focus": {"background-color":"#bf5817"} } } }
+          }
+        });
+        // Modaalin komponentti
+        ui.createComponent('product', {
+          id: '10696839102802',
+          node: document.getElementById('product-component-modal-huppari'),
+          moneyFormat: '%E2%82%AC%7B%7Bamount_with_comma_separator%7D%7D',
+          options: {
+            "product": {
+              "styles": {
+                "product": { "max-width": "100%", "margin": "0" },
+                "button": { ":hover": {"background-color":"#bf5817"}, "background-color":"#d4621a", ":focus": {"background-color":"#bf5817"}, "width":"100%", "margin-top":"0.8rem" },
+                "price": { "color":"#f0e8d8" }
+              },
+              "contents": { "img": false, "imgWithCarousel": true, "title": true, "price": true, "options": true, "button": true },
+              "text": { "button": "Lisää koriin" }
+            },
+            "modalProduct": {
+              "contents": { "img": false, "imgWithCarousel": true, "button": false, "buttonWithQuantity": true },
+              "styles": { "button": { "background-color":"#d4621a", ":hover":{"background-color":"#bf5817"} } },
+              "text": { "button": "Lisää koriin" }
+            },
+            "cart": {
+              "styles": { "button": { "background-color":"#d4621a", ":hover":{"background-color":"#bf5817"} } },
+              "text": { "total":"Yhteensä", "button":"Kassalle" }
+            },
+            "toggle": { "styles": { "toggle": { "background-color":"#d4621a" } } }
+          }
         });
       });
     }
