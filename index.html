@@ -1418,12 +1418,13 @@
     <div class="shop-category-title">Wannabehunting Merch</div>
     <div class="product-grid">
 
-      <div class="product-card has-modal" id="tpaita-card" onclick="openProductModal()">
+      <div class="product-card">
+        <div class="product-badge">Tulossa</div>
         <div class="product-info">
-          <h3 id="tpaita-title">Make Hiace Great Again T-paita</h3>
-          <!-- SHOPIFY BUY BUTTON -->
-          <div class="shopify-buy-btn-wrap" onclick="event.stopPropagation()">
-            <div id='product-component-1775163891947'></div>
+          <h3>Make Hiace Great Again T-paita</h3>
+          <p class="product-desc">Palaa kauppaan pian — tuote päivitetään.</p>
+          <div class="shopify-buy-btn-wrap">
+            <div class="shopify-btn-placeholder">Tulossa pian</div>
           </div>
         </div>
       </div>
@@ -1602,50 +1603,6 @@
     <img id="lightbox-img" src="" alt="Tuotekuva" />
   </div>
 
-  <!-- PRODUCT MODAL: WBH T-paita -->
-  <div class="pmodal-overlay" id="productModal" onclick="closePModalOnBg(event)">
-    <div class="pmodal" role="dialog" aria-modal="true" aria-label="WBH T-paita">
-      <button class="pmodal-close" onclick="closeProductModal()" aria-label="Sulje">✕</button>
-      <div class="pmodal-body">
-        <!-- Vasen: Shopify-komponentti kuvakarusellilla + värinvalinnalla -->
-        <div class="pmodal-shopify-main" onclick="event.stopPropagation()">
-          <div id='product-component-modal-tpaita' style="width:100%;"></div>
-          <button class="pmodal-zoom-btn" onclick="openLightboxFromModal('product-component-modal-tpaita')">Suurenna kuva</button>
-        </div>
-        <!-- Oikea: Suomenkieliset tiedot -->
-        <div class="pmodal-info">
-          <span class="pmodal-badge">Printful · EU</span>
-          <h2 id="tpaita-modal-title">WBH T-paita</h2>
-          <p class="pmodal-desc" id="pmodal-desc"></p>
-
-          <div>
-            <div class="pmodal-section-title">Kokotaulukko (cm)</div>
-            <table class="size-table">
-              <thead>
-                <tr><th>Koko</th><th>Rinta</th><th>Pituus</th><th>Hiha</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>S</td><td>91–96</td><td>69</td><td>20</td></tr>
-                <tr><td>M</td><td>96–101</td><td>72</td><td>21</td></tr>
-                <tr><td>L</td><td>101–106</td><td>74</td><td>22</td></tr>
-                <tr><td>XL</td><td>106–111</td><td>76</td><td>23</td></tr>
-                <tr><td>2XL</td><td>111–116</td><td>78</td><td>24</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div>
-            <div class="pmodal-section-title">Materiaalit &amp; toimitus</div>
-            <p style="font-size:0.82rem;color:var(--ink-dim);line-height:1.6;">
-              100% ringspun-puuvilla · Painatus: DTG<br/>
-              Toimitus EU-varastolta 5–10 arkipäivää<br/>
-              Ilmainen palautus 14 päivän sisällä
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- PRODUCT MODAL: WBH Huppari -->
   <div class="pmodal-overlay" id="huppariModal" onclick="closeHuppariModalOnBg(event)">
@@ -1832,11 +1789,7 @@
         // Kortille vain title, modaaliin title + kuvaus
         var title = p.title || '';
         var desc = p.description || '';
-        if (key === 'tpaita') {
-          var ct = document.getElementById('tpaita-title'); if (ct) ct.textContent = title;
-          var mt = document.getElementById('tpaita-modal-title'); if (mt) mt.textContent = title;
-          var md = document.getElementById('pmodal-desc'); if (md) md.textContent = desc;
-        } else if (key === 'huppari') {
+        if (key === 'huppari') {
           var ct2 = document.getElementById('huppari-title'); if (ct2) ct2.textContent = title;
           var mt2 = document.getElementById('huppari-modal-title'); if (mt2) mt2.textContent = title;
           var md2 = document.getElementById('huppari-modal-desc'); if (md2) md2.textContent = desc;
@@ -1850,12 +1803,11 @@
     }
 
     // Haetaan tuotetiedot sivun latauksen yhteydessä
-    fetchProductData('gid://shopify/Product/10696654258514', 'tpaita');
     fetchProductData('gid://shopify/Product/10696839102802', 'huppari');
     fetchProductData('gid://shopify/Product/11090968510802', 'scriptor');
 
     function openLightboxFromModal(compId) {
-      var key = compId.indexOf('huppari') !== -1 ? 'huppari' : (compId.indexOf('scriptor') !== -1 ? 'scriptor' : 'tpaita');
+      var key = compId.indexOf('huppari') !== -1 ? 'huppari' : 'scriptor';
       var src = wbhProductImages[key];
       if (!src) {
         alert('Kuva ei ole vielä latautunut — kokeile hetken kuluttua.');
@@ -1871,26 +1823,20 @@
       document.body.style.overflow = '';
     }
 
-    // ── Product modal ──
-    function openProductModal() {
-      document.getElementById('productModal').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeProductModal() {
-      document.getElementById('productModal').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-    function closePModalOnBg(e) {
-      if (e.target === document.getElementById('productModal')) closeProductModal();
-    }
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') { closeProductModal(); closeHuppariModal(); closeScriptorModal(); closeContactModal(); closeLightbox(); }
+      if (e.key === 'Escape') { closeHuppariModal(); closeScriptorModal(); closeContactModal(); closeLightbox(); }
     });
 
     // ── Huppari modal ──
     function openHuppariModal() {
       document.getElementById('huppariModal').classList.add('open');
       document.body.style.overflow = 'hidden';
+      ensureHuppariModalComponent();
+    }
+    function ensureHuppariModalComponent() {
+      if (window.wbhHuppariModalCreated) return;
+      if (window.wbhInitHuppariModal) { window.wbhInitHuppariModal(); }
+      else { setTimeout(ensureHuppariModalComponent, 150); }
     }
     function closeHuppariModal() {
       document.getElementById('huppariModal').classList.remove('open');
@@ -1904,6 +1850,12 @@
     function openScriptorModal() {
       document.getElementById('scriptorModal').classList.add('open');
       document.body.style.overflow = 'hidden';
+      ensureScriptorModalComponent();
+    }
+    function ensureScriptorModalComponent() {
+      if (window.wbhScriptorModalCreated) return;
+      if (window.wbhInitScriptorModal) { window.wbhInitScriptorModal(); }
+      else { setTimeout(ensureScriptorModalComponent, 150); }
     }
     function closeScriptorModal() {
       document.getElementById('scriptorModal').classList.remove('open');
@@ -2014,180 +1966,6 @@
     });
   </script>
 
-  <!-- SHOPIFY BUY BUTTON -->
-  <script type="text/javascript">
-  /*<![CDATA[*/
-  (function () {
-    var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
-    if (window.ShopifyBuy) {
-      if (window.ShopifyBuy.UI) { ShopifyBuyInit(); } else { loadScript(); }
-    } else { loadScript(); }
-    function loadScript() {
-      var script = document.createElement('script');
-      script.async = true; script.src = scriptURL;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
-      script.onload = ShopifyBuyInit;
-    }
-    function ShopifyBuyInit() {
-      var client = ShopifyBuy.buildClient({
-        domain: 'chs050-pp.myshopify.com',
-        storefrontAccessToken: '59be8f704daac39846903bd32f7652ae',
-      });
-      ShopifyBuy.UI.onReady(client).then(function (ui) {
-        // Modaalin komponentti — kuva + värinvalinta + hinta + lisää koriin
-        ui.createComponent('product', {
-          id: '10696654258514',
-          node: document.getElementById('product-component-modal-tpaita'),
-          moneyFormat: '%E2%82%AC%7B%7Bamount_with_comma_separator%7D%7D',
-          options: {
-            "product": {
-              "styles": {
-                "product": { "max-width": "100%", "margin": "0" },
-                "button": { ":hover":{"background-color":"#cc8c1a"}, "background-color":"#ffb020", "color":"#0a0c08", ":focus":{"background-color":"#cc8c1a"}, "width":"100%", "margin-top":"0.8rem" },
-                "price": { "color": "#ffb020", "font-size": "1.2em", "font-weight": "700" },
-                "compareAt": { "color":"#8b8d7c" }
-              },
-              "contents": { "img": false, "imgWithCarousel": true, "title": false, "price": true, "options": true, "button": true, "buttonWithQuantity": false },
-              "text": { "button": "Lisää koriin" }
-            },
-            "modalProduct": {
-              "contents": { "img": false, "imgWithCarousel": true, "button": false, "buttonWithQuantity": true },
-              "styles": { "button": { "background-color":"#ffb020", "color":"#0a0c08", ":hover":{"background-color":"#cc8c1a"} } },
-              "text": { "button": "Lisää koriin" }
-            },
-            "cart": {
-              "styles": { "button": { "background-color":"#ffb020", "color":"#0a0c08", ":hover":{"background-color":"#cc8c1a"} } },
-              "text": { "total":"Yhteensä", "button":"Kassalle" }
-            },
-            "toggle": { "styles": { "toggle": { "background-color":"#ffb020" } } }
-          }
-        });
-      });
-      document.dispatchEvent(new Event('shopify:ui:ready'));
-    }
-  })();
-  /*]]>*/
-  </script>
-
-  <!-- SHOPIFY BUY BUTTON (kortti) -->
-  <script type="text/javascript">
-  /*<![CDATA[*/
-  (function () {
-    var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
-    if (window.ShopifyBuy) {
-      if (window.ShopifyBuy.UI) {
-        ShopifyBuyInit();
-      } else {
-        loadScript();
-      }
-    } else {
-      loadScript();
-    }
-    function loadScript() {
-      var script = document.createElement('script');
-      script.async = true;
-      script.src = scriptURL;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
-      script.onload = ShopifyBuyInit;
-    }
-    function ShopifyBuyInit() {
-      var client = ShopifyBuy.buildClient({
-        domain: 'chs050-pp.myshopify.com',
-        storefrontAccessToken: '59be8f704daac39846903bd32f7652ae',
-      });
-      ShopifyBuy.UI.onReady(client).then(function (ui) {
-        ui.createComponent('product', {
-          id: '10696654258514',
-          node: document.getElementById('product-component-1775163891947'),
-          moneyFormat: '%E2%82%AC%7B%7Bamount_with_comma_separator%7D%7D',
-          options: {
-            "product": {
-              "styles": {
-                "product": {
-                  "@media (min-width: 601px)": {
-                    "max-width": "calc(25% - 20px)",
-                    "margin-left": "20px",
-                    "margin-bottom": "50px"
-                  }
-                },
-                "button": {
-                  ":hover": { "background-color": "#cc8c1a" },
-                  "background-color": "#ffb020",
-                  "color": "#0a0c08",
-                  ":focus": { "background-color": "#cc8c1a" }
-                },
-                "price": {
-                  "color": "#ffb020",
-                  "font-size": "1.15em",
-                  "font-weight": "700"
-                }
-              },
-              "contents": { "img": true, "imgWithCarousel": false, "title": false, "price": true, "options": true, "button": true },
-              "text": { "button": "Lisää koriin" }
-            },
-            "productSet": {
-              "styles": {
-                "products": {
-                  "@media (min-width: 601px)": { "margin-left": "-20px" }
-                }
-              }
-            },
-            "modalProduct": {
-              "contents": {
-                "img": false,
-                "imgWithCarousel": true,
-                "button": false,
-                "buttonWithQuantity": true
-              },
-              "styles": {
-                "product": {
-                  "@media (min-width: 601px)": {
-                    "max-width": "100%",
-                    "margin-left": "0px",
-                    "margin-bottom": "0px"
-                  }
-                },
-                "button": {
-                  ":hover": { "background-color": "#cc8c1a" },
-                  "background-color": "#ffb020",
-                  "color": "#0a0c08",
-                  ":focus": { "background-color": "#cc8c1a" }
-                }
-              },
-              "text": { "button": "Lisää koriin" }
-            },
-            "option": {},
-            "cart": {
-              "styles": {
-                "button": {
-                  ":hover": { "background-color": "#cc8c1a" },
-                  "background-color": "#ffb020",
-                  "color": "#0a0c08",
-                  ":focus": { "background-color": "#cc8c1a" }
-                }
-              },
-              "text": {
-                "total": "Yhteensä",
-                "button": "Kassalle"
-              }
-            },
-            "toggle": {
-              "styles": {
-                "toggle": {
-                  "background-color": "#ffb020",
-                  ":hover": { "background-color": "#cc8c1a" },
-                  ":focus": { "background-color": "#cc8c1a" }
-                }
-              }
-            }
-          },
-        });
-      });
-    }
-  })();
-  /*]]>*/
-  </script>
-
   <!-- SHOPIFY BUY BUTTON: Huppari -->
   <script type="text/javascript">
   /*<![CDATA[*/
@@ -2235,33 +2013,38 @@
             "toggle": { "styles": { "toggle": { "background-color":"#ffb020", ":hover": {"background-color":"#cc8c1a"}, ":focus": {"background-color":"#cc8c1a"} } } }
           }
         });
-        // Modaalin komponentti
-        ui.createComponent('product', {
-          id: '10696839102802',
-          node: document.getElementById('product-component-modal-huppari'),
-          moneyFormat: '%E2%82%AC%7B%7Bamount_with_comma_separator%7D%7D',
-          options: {
-            "product": {
-              "styles": {
-                "product": { "max-width": "100%", "margin": "0" },
-                "button": { ":hover": {"background-color":"#cc8c1a"}, "background-color":"#ffb020", "color":"#0a0c08", ":focus": {"background-color":"#cc8c1a"}, "width":"100%", "margin-top":"0.8rem" },
-                "price": { "color": "#ffb020", "font-size": "1.2em", "font-weight": "700" }
+        // Modaalin komponentti — luodaan vasta kun modaali avataan (piilotettuna
+        // iframe ei osaa mitata korkeuttaan, joten luonti täytyy tapahtua näkyvänä)
+        window.wbhInitHuppariModal = function () {
+          if (window.wbhHuppariModalCreated) return;
+          window.wbhHuppariModalCreated = true;
+          ui.createComponent('product', {
+            id: '10696839102802',
+            node: document.getElementById('product-component-modal-huppari'),
+            moneyFormat: '%E2%82%AC%7B%7Bamount_with_comma_separator%7D%7D',
+            options: {
+              "product": {
+                "styles": {
+                  "product": { "max-width": "100%", "margin": "0" },
+                  "button": { ":hover": {"background-color":"#cc8c1a"}, "background-color":"#ffb020", "color":"#0a0c08", ":focus": {"background-color":"#cc8c1a"}, "width":"100%", "margin-top":"0.8rem" },
+                  "price": { "color": "#ffb020", "font-size": "1.2em", "font-weight": "700" }
+                },
+                "contents": { "img": false, "imgWithCarousel": true, "title": false, "price": true, "options": true, "button": true },
+                "text": { "button": "Lisää koriin" }
               },
-              "contents": { "img": false, "imgWithCarousel": true, "title": false, "price": true, "options": true, "button": true },
-              "text": { "button": "Lisää koriin" }
-            },
-            "modalProduct": {
-              "contents": { "img": false, "imgWithCarousel": true, "button": false, "buttonWithQuantity": true },
-              "styles": { "button": { "background-color":"#ffb020", "color":"#0a0c08", ":hover":{"background-color":"#cc8c1a"} } },
-              "text": { "button": "Lisää koriin" }
-            },
-            "cart": {
-              "styles": { "button": { "background-color":"#ffb020", "color":"#0a0c08", ":hover":{"background-color":"#cc8c1a"} } },
-              "text": { "total":"Yhteensä", "button":"Kassalle" }
-            },
-            "toggle": { "styles": { "toggle": { "background-color":"#ffb020" } } }
-          }
-        });
+              "modalProduct": {
+                "contents": { "img": false, "imgWithCarousel": true, "button": false, "buttonWithQuantity": true },
+                "styles": { "button": { "background-color":"#ffb020", "color":"#0a0c08", ":hover":{"background-color":"#cc8c1a"} } },
+                "text": { "button": "Lisää koriin" }
+              },
+              "cart": {
+                "styles": { "button": { "background-color":"#ffb020", "color":"#0a0c08", ":hover":{"background-color":"#cc8c1a"} } },
+                "text": { "total":"Yhteensä", "button":"Kassalle" }
+              },
+              "toggle": { "styles": { "toggle": { "background-color":"#ffb020" } } }
+            }
+          });
+        };
       });
     }
   })();
@@ -2315,33 +2098,37 @@
             "toggle": { "styles": { "toggle": { "background-color":"#ffb020", ":hover": {"background-color":"#cc8c1a"}, ":focus": {"background-color":"#cc8c1a"} } } }
           }
         });
-        // Modaalin komponentti
-        ui.createComponent('product', {
-          id: '11090968510802',
-          node: document.getElementById('product-component-modal-scriptor'),
-          moneyFormat: '%E2%82%AC%7B%7Bamount_with_comma_separator%7D%7D',
-          options: {
-            "product": {
-              "styles": {
-                "product": { "max-width": "100%", "margin": "0" },
-                "button": { ":hover": {"background-color":"#cc8c1a"}, "background-color":"#ffb020", "color":"#0a0c08", ":focus": {"background-color":"#cc8c1a"}, "width":"100%", "margin-top":"0.8rem" },
-                "price": { "color": "#ffb020", "font-size": "1.2em", "font-weight": "700" }
+        // Modaalin komponentti — luodaan vasta kun modaali avataan (ks. Huppari-kommentti)
+        window.wbhInitScriptorModal = function () {
+          if (window.wbhScriptorModalCreated) return;
+          window.wbhScriptorModalCreated = true;
+          ui.createComponent('product', {
+            id: '11090968510802',
+            node: document.getElementById('product-component-modal-scriptor'),
+            moneyFormat: '%E2%82%AC%7B%7Bamount_with_comma_separator%7D%7D',
+            options: {
+              "product": {
+                "styles": {
+                  "product": { "max-width": "100%", "margin": "0" },
+                  "button": { ":hover": {"background-color":"#cc8c1a"}, "background-color":"#ffb020", "color":"#0a0c08", ":focus": {"background-color":"#cc8c1a"}, "width":"100%", "margin-top":"0.8rem" },
+                  "price": { "color": "#ffb020", "font-size": "1.2em", "font-weight": "700" }
+                },
+                "contents": { "img": false, "imgWithCarousel": true, "title": false, "price": true, "options": true, "button": true },
+                "text": { "button": "Lisää koriin" }
               },
-              "contents": { "img": false, "imgWithCarousel": true, "title": false, "price": true, "options": true, "button": true },
-              "text": { "button": "Lisää koriin" }
-            },
-            "modalProduct": {
-              "contents": { "img": false, "imgWithCarousel": true, "button": false, "buttonWithQuantity": true },
-              "styles": { "button": { "background-color":"#ffb020", "color":"#0a0c08", ":hover":{"background-color":"#cc8c1a"} } },
-              "text": { "button": "Lisää koriin" }
-            },
-            "cart": {
-              "styles": { "button": { "background-color":"#ffb020", "color":"#0a0c08", ":hover":{"background-color":"#cc8c1a"} } },
-              "text": { "total":"Yhteensä", "button":"Kassalle" }
-            },
-            "toggle": { "styles": { "toggle": { "background-color":"#ffb020" } } }
-          }
-        });
+              "modalProduct": {
+                "contents": { "img": false, "imgWithCarousel": true, "button": false, "buttonWithQuantity": true },
+                "styles": { "button": { "background-color":"#ffb020", "color":"#0a0c08", ":hover":{"background-color":"#cc8c1a"} } },
+                "text": { "button": "Lisää koriin" }
+              },
+              "cart": {
+                "styles": { "button": { "background-color":"#ffb020", "color":"#0a0c08", ":hover":{"background-color":"#cc8c1a"} } },
+                "text": { "total":"Yhteensä", "button":"Kassalle" }
+              },
+              "toggle": { "styles": { "toggle": { "background-color":"#ffb020" } } }
+            }
+          });
+        };
       });
     }
   })();
