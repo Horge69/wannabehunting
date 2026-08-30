@@ -1464,6 +1464,22 @@
 
     </div>
 
+    <!-- ── TARVIKKEET ── -->
+    <div class="shop-category-title">Käytännön Tarvikkeet</div>
+    <div class="product-grid">
+
+      <div class="product-card has-modal" id="scriptor-card" onclick="openScriptorModal()">
+        <div class="product-info">
+          <h3 id="scriptor-title">Tendy Scriptor tarratulostin</h3>
+          <!-- SHOPIFY BUY BUTTON -->
+          <div class="shopify-buy-btn-wrap" onclick="event.stopPropagation()">
+            <div id='product-component-scriptor-001'></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
     <!-- ── 3D-TUOTTEET ── -->
     <div class="shop-category-title">3D-Tulostetut Metsästysvarusteet</div>
     <div class="product-grid">
@@ -1674,6 +1690,46 @@
     </div>
   </div>
 
+  <!-- PRODUCT MODAL: Tendy Scriptor -->
+  <div class="pmodal-overlay" id="scriptorModal" onclick="closeScriptorModalOnBg(event)">
+    <div class="pmodal" role="dialog" aria-modal="true" aria-label="Tendy Scriptor tarratulostin">
+      <button class="pmodal-close" onclick="closeScriptorModal()" aria-label="Sulje">✕</button>
+      <div class="pmodal-body">
+        <div class="pmodal-shopify-main" onclick="event.stopPropagation()">
+          <div id='product-component-modal-scriptor' style="width:100%;"></div>
+          <button class="pmodal-zoom-btn" onclick="openLightboxFromModal('product-component-modal-scriptor')">Suurenna kuva</button>
+        </div>
+        <div class="pmodal-info">
+          <span class="pmodal-badge">Tendy</span>
+          <h2 id="scriptor-modal-title">Tendy Scriptor tarratulostin</h2>
+          <p class="pmodal-desc" id="scriptor-modal-desc"></p>
+
+          <div>
+            <div class="pmodal-section-title">Tekniset tiedot</div>
+            <table class="size-table">
+              <tbody>
+                <tr><td>Tekniikka</td><td>Lämpötulostus, ei mustekasettia</td></tr>
+                <tr><td>Tarran koko</td><td>80 × 50 mm</td></tr>
+                <tr><td>Tarkkuus</td><td>203 dpi</td></tr>
+                <tr><td>Akun kesto</td><td>3–5 tuntia</td></tr>
+                <tr><td>Koko / paino</td><td>132×115×61 mm, 500 g</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <div class="pmodal-section-title">Käyttö &amp; lataus</div>
+            <p style="font-size:0.82rem;color:var(--ink-dim);line-height:1.6;">
+              Yhdistyy Tendy-sovellukseen Bluetoothin kautta<br/>
+              Tarrat kestävät pakkasessa — sopivat pakasteruokien merkintään<br/>
+              Lataus USB-C, n. 3 tuntia
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- CONTACT MODAL -->
   <div class="modal-overlay" id="contactModal" onclick="closeContactModalOnBg(event)">
     <div class="modal" role="dialog" aria-modal="true" aria-label="Yhteystiedot">
@@ -1784,6 +1840,10 @@
           var ct2 = document.getElementById('huppari-title'); if (ct2) ct2.textContent = title;
           var mt2 = document.getElementById('huppari-modal-title'); if (mt2) mt2.textContent = title;
           var md2 = document.getElementById('huppari-modal-desc'); if (md2) md2.textContent = desc;
+        } else if (key === 'scriptor') {
+          var ct3 = document.getElementById('scriptor-title'); if (ct3) ct3.textContent = title;
+          var mt3 = document.getElementById('scriptor-modal-title'); if (mt3) mt3.textContent = title;
+          var md3 = document.getElementById('scriptor-modal-desc'); if (md3) md3.textContent = desc;
         }
       })
       .catch(() => {});
@@ -1792,9 +1852,10 @@
     // Haetaan tuotetiedot sivun latauksen yhteydessä
     fetchProductData('gid://shopify/Product/10696654258514', 'tpaita');
     fetchProductData('gid://shopify/Product/10696839102802', 'huppari');
+    fetchProductData('gid://shopify/Product/11090968510802', 'scriptor');
 
     function openLightboxFromModal(compId) {
-      var key = compId.indexOf('huppari') !== -1 ? 'huppari' : 'tpaita';
+      var key = compId.indexOf('huppari') !== -1 ? 'huppari' : (compId.indexOf('scriptor') !== -1 ? 'scriptor' : 'tpaita');
       var src = wbhProductImages[key];
       if (!src) {
         alert('Kuva ei ole vielä latautunut — kokeile hetken kuluttua.');
@@ -1823,7 +1884,7 @@
       if (e.target === document.getElementById('productModal')) closeProductModal();
     }
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') { closeProductModal(); closeHuppariModal(); closeContactModal(); closeLightbox(); }
+      if (e.key === 'Escape') { closeProductModal(); closeHuppariModal(); closeScriptorModal(); closeContactModal(); closeLightbox(); }
     });
 
     // ── Huppari modal ──
@@ -1837,6 +1898,19 @@
     }
     function closeHuppariModalOnBg(e) {
       if (e.target === document.getElementById('huppariModal')) closeHuppariModal();
+    }
+
+    // ── Scriptor modal ──
+    function openScriptorModal() {
+      document.getElementById('scriptorModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeScriptorModal() {
+      document.getElementById('scriptorModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function closeScriptorModalOnBg(e) {
+      if (e.target === document.getElementById('scriptorModal')) closeScriptorModal();
     }
 
     // ── Contact modal ──
@@ -2165,6 +2239,86 @@
         ui.createComponent('product', {
           id: '10696839102802',
           node: document.getElementById('product-component-modal-huppari'),
+          moneyFormat: '%E2%82%AC%7B%7Bamount_with_comma_separator%7D%7D',
+          options: {
+            "product": {
+              "styles": {
+                "product": { "max-width": "100%", "margin": "0" },
+                "button": { ":hover": {"background-color":"#cc8c1a"}, "background-color":"#ffb020", "color":"#0a0c08", ":focus": {"background-color":"#cc8c1a"}, "width":"100%", "margin-top":"0.8rem" },
+                "price": { "color": "#ffb020", "font-size": "1.2em", "font-weight": "700" }
+              },
+              "contents": { "img": false, "imgWithCarousel": true, "title": false, "price": true, "options": true, "button": true },
+              "text": { "button": "Lisää koriin" }
+            },
+            "modalProduct": {
+              "contents": { "img": false, "imgWithCarousel": true, "button": false, "buttonWithQuantity": true },
+              "styles": { "button": { "background-color":"#ffb020", "color":"#0a0c08", ":hover":{"background-color":"#cc8c1a"} } },
+              "text": { "button": "Lisää koriin" }
+            },
+            "cart": {
+              "styles": { "button": { "background-color":"#ffb020", "color":"#0a0c08", ":hover":{"background-color":"#cc8c1a"} } },
+              "text": { "total":"Yhteensä", "button":"Kassalle" }
+            },
+            "toggle": { "styles": { "toggle": { "background-color":"#ffb020" } } }
+          }
+        });
+      });
+    }
+  })();
+  /*]]>*/
+  </script>
+
+  <!-- SHOPIFY BUY BUTTON: Tendy Scriptor -->
+  <script type="text/javascript">
+  /*<![CDATA[*/
+  (function () {
+    var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
+    if (window.ShopifyBuy) {
+      if (window.ShopifyBuy.UI) { ShopifyBuyInit(); } else { loadScript(); }
+    } else { loadScript(); }
+    function loadScript() {
+      var script = document.createElement('script');
+      script.async = true; script.src = scriptURL;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
+      script.onload = ShopifyBuyInit;
+    }
+    function ShopifyBuyInit() {
+      var client = ShopifyBuy.buildClient({
+        domain: 'chs050-pp.myshopify.com',
+        storefrontAccessToken: '59be8f704daac39846903bd32f7652ae',
+      });
+      ShopifyBuy.UI.onReady(client).then(function (ui) {
+        // Kortin nappi
+        ui.createComponent('product', {
+          id: '11090968510802',
+          node: document.getElementById('product-component-scriptor-001'),
+          moneyFormat: '%E2%82%AC%7B%7Bamount_with_comma_separator%7D%7D',
+          options: {
+            "product": {
+              "styles": {
+                "product": { "@media (min-width: 601px)": { "max-width": "calc(25% - 20px)", "margin-left": "20px", "margin-bottom": "50px" } },
+                "button": { ":hover": {"background-color":"#cc8c1a"}, "background-color":"#ffb020", "color":"#0a0c08", ":focus": {"background-color":"#cc8c1a"} },
+                "price": { "color": "#ffb020", "font-size": "1.15em", "font-weight": "700" }
+              },
+              "contents": { "img": true, "imgWithCarousel": false, "title": false, "price": true, "options": true, "button": true },
+              "text": { "button": "Lisää koriin" }
+            },
+            "modalProduct": {
+              "contents": { "img": false, "imgWithCarousel": true, "button": false, "buttonWithQuantity": true },
+              "styles": { "button": { ":hover": {"background-color":"#cc8c1a"}, "background-color":"#ffb020", "color":"#0a0c08", ":focus": {"background-color":"#cc8c1a"} } },
+              "text": { "button": "Lisää koriin" }
+            },
+            "cart": {
+              "styles": { "button": { ":hover": {"background-color":"#cc8c1a"}, "background-color":"#ffb020", "color":"#0a0c08", ":focus": {"background-color":"#cc8c1a"} } },
+              "text": { "total": "Yhteensä", "button": "Kassalle" }
+            },
+            "toggle": { "styles": { "toggle": { "background-color":"#ffb020", ":hover": {"background-color":"#cc8c1a"}, ":focus": {"background-color":"#cc8c1a"} } } }
+          }
+        });
+        // Modaalin komponentti
+        ui.createComponent('product', {
+          id: '11090968510802',
+          node: document.getElementById('product-component-modal-scriptor'),
           moneyFormat: '%E2%82%AC%7B%7Bamount_with_comma_separator%7D%7D',
           options: {
             "product": {
