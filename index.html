@@ -428,9 +428,8 @@
     .dogs-row {
       grid-column: 1 / -1;
       display: flex;
-      align-items: center;
-      gap: 0.9rem;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 0.7rem;
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 3px;
@@ -438,12 +437,30 @@
     }
 
     .dogs-row .dog-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.72rem;
       letter-spacing: 0.1em;
       color: var(--amber);
       text-transform: uppercase;
-      margin-right: 0.5rem;
+    }
+    .dogs-row .dog-title svg { flex-shrink: 0; opacity: 0.9; }
+
+    .dog-group {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+    }
+
+    .dog-breed {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.03em;
+      color: var(--ink-dim);
+      white-space: nowrap;
     }
 
     .dog-badge {
@@ -453,7 +470,9 @@
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.82rem;
       color: var(--ink);
+      transition: border-color 0.18s, transform 0.18s;
     }
+    .dog-badge:hover { border-color: var(--amber-dim); transform: translateY(-2px); }
 
     /* ── KAUPPA / SHOP ────────────────────── */
     .shop-intro {
@@ -1302,7 +1321,7 @@
       </div>
 
       <div class="person-card">
-        <img class="person-photo" src="images/mikko_web.jpg" alt="Mikko" />
+        <img class="person-photo" style="object-position: center 22%;" src="images/mikko_web.jpg" alt="Mikko" />
         <div class="person-card-body">
           <span class="person-role">Kuljettaja</span>
           <h3>Mikko</h3>
@@ -1311,7 +1330,7 @@
       </div>
 
       <div class="person-card">
-        <img class="person-photo" src="images/jose1_web.jpg" alt="Jose" />
+        <img class="person-photo" style="object-position: center 20%;" src="images/jose1_web.jpg" alt="Jose" />
         <div class="person-card-body">
           <span class="person-role">Kuvaaja</span>
           <h3>Jose</h3>
@@ -1320,10 +1339,21 @@
       </div>
 
       <div class="dogs-row">
-        <span class="dog-title">Koirat</span>
-        <span class="dog-badge">Minttu</span>
-        <span class="dog-badge">Sisu</span>
-        <span class="dog-badge">Hupi</span>
+        <div class="dog-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M4.5 12.5a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm4-5.5a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm7 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm4 5.5a2 2 0 1 1 0-4 2 2 0 0 1 0 4ZM12 21c-2.9 0-5.5-1.6-5.5-4.2 0-1.8 1.4-2.8 2.6-3.7 1-.8 1.9-1.5 1.9-2.6a1 1 0 0 1 2 0c0 1.1.9 1.8 1.9 2.6 1.2.9 2.6 1.9 2.6 3.7 0 2.6-2.6 4.2-5.5 4.2Z"/></svg>
+          Koirat
+        </div>
+        <div class="dog-group">
+          <span class="dog-breed">suomenajokoira</span>
+          <span class="dog-badge">Minttu</span>
+          <span class="dog-badge">Sisu</span>
+          <span class="dog-badge">Jekku</span>
+        </div>
+        <div class="dog-group">
+          <span class="dog-breed">chesapeakelahdennoutaja</span>
+          <span class="dog-badge">Hupi</span>
+          <span class="dog-badge">Lysti</span>
+        </div>
       </div>
 
     </div>
